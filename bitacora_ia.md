@@ -3,7 +3,7 @@
 Proyecto: A-Fénix, plataforma de comandas para el restaurante chino A Fénix de Oro
 Estudiante: Eduardo Ascencio
 Funcionalidad: HU-01 Registrar la comanda y HU-02 Modificaciones de cada plato
-Asistente usado: Claude (claude.ai), en el chat
+Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code dentro de VS Code en la semana 6
 
 ## Entradas
 
@@ -61,13 +61,69 @@ Asistente usado: Claude (claude.ai), en el chat
 - **Verificación:** No toqué ninguna prueba (`git diff -- tests` sale vacío) y siguen pasando las 22, con 100 % de cobertura.
 - **Commit relacionado:** 8b50fad «Refactor: mensajes en constantes y validaciones en funciones pequeñas (sin tocar las pruebas)»
 
+## Entradas de la semana 6
+
+### Entrada 7
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** «Sigue con la semana 6.» La IA configuró ruff, bandit y mypy en `pyproject.toml` y los corrió antes de cambiar nada. Ruff marcó dos líneas largas (E501) en `tests/test_registrar_comanda.py` y la IA propuso no corregirlas.
+- **Decisión:** Aceptada
+- **Por qué:** Esas líneas están en las pruebas de la semana 5, que no se pueden modificar, y no son un problema de seguridad. Quedaron anotadas como avisos no corregidos en `revision_seguridad.md`.
+- **Verificación:** `git diff semana-5 -- tests/test_registrar_comanda.py` sale vacío.
+- **Commit relacionado:** 4bd1861 «Configura ruff, bandit y mypy en pyproject.toml»
+
+### Entrada 8
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** La IA corrió `pip-audit` y salió que pytest 8.3.4 tiene la vulnerabilidad PYSEC-2026-1845. Propuso subir a pytest 9.0.3 y pytest-cov a 7.1.0.
+- **Decisión:** Aceptada
+- **Por qué:** Es la versión que corrige la falla y es un cambio de dos líneas.
+- **Verificación:** Con las versiones nuevas pasan las 22 pruebas de la semana 5 y `pip-audit` sale sin vulnerabilidades.
+- **Commit relacionado:** 1f7a23a «H-01: sube pytest a 9.0.3 por PYSEC-2026-1845»
+
+### Entrada 9
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** «Revisa comandas.py como si los datos llegaran directo de la API, sin confiar en la tablet.» La IA llamó la función con datos raros (platos en texto, un plato `None`, el nombre del plato en lista, 10 000 platos, una cantidad de mil millones, un nombre de 5 000 caracteres con `<script>`) y con lo que falló armó 15 pruebas de abuso en un archivo aparte.
+- **Decisión:** Aceptada
+- **Por qué:** Cada prueba sale de algo que probé y falló de verdad. Además trae dos pruebas que pasan desde el principio (50 platos y cantidad 20) para que la corrección no rechace comandas buenas.
+- **Verificación:** Antes de corregir fallaron 13 de las 15. Después de H-02, H-03 y H-04 pasan las 15.
+- **Commit relacionado:** a2e7f85 «Pruebas de abuso de registrar comanda (en rojo)»
+
+### Entrada 10
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** Para H-03 la IA puso un tope de 50 platos por comanda y 20 por plato. A la mesa no le puso tope.
+- **Decisión:** Aceptada
+- **Por qué:** Sin tope cualquiera llena la pantalla de cocina con una sola petición. Los números son provisionales hasta que el restaurante diga cuántas comandas tiene en hora pico (P-01). A la mesa no le puse tope porque no sé cuántas mesas hay (P-03) y prefiero no inventarlo.
+- **Verificación:** Las pruebas de 51 platos y cantidad de mil millones fallan con el mensaje nuevo, y las de 50 platos y cantidad 20 pasan.
+- **Commit relacionado:** 06f1eb1 «H-03: pone tope de 50 platos por comanda y 20 por plato»
+
+### Entrada 11
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** Para que mypy en modo estricto no diera errores, la primera versión de la IA repetía `isinstance(valor, int)` antes de cada llamada a `_es_entero_positivo`.
+- **Decisión:** Aceptada con cambios
+- **Por qué:** Repetir la misma revisión en dos sitios es fácil de olvidar en uno. Lo cambié para que `_es_entero_positivo` devuelva `TypeGuard[int]`, y así mypy sabe que el valor es entero sin repetir nada.
+- **Verificación:** `mypy` sale sin errores, ruff sin avisos en `afenix/` y pasan las 37 pruebas con 100 % de cobertura.
+- **Commit relacionado:** 2678ccb «Tipos y docstrings en comandas.py, mypy sin errores»
+
+### Entrada 12
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** En la revisión la IA marcó que el parámetro `ahora` acepta cualquier cosa, por ejemplo un texto, y lo guarda como hora de entrada.
+- **Decisión:** Rechazada
+- **Por qué:** Es cierto, pero `ahora` no viene del cliente: lo usan las pruebas para no depender del reloj, y en la API guardada (`_guardado/api.py`) no se pasa. Validarlo sería código que hoy no protege de nada.
+- **Verificación:** Revisé `_guardado/api.py`: llama `registrar_comanda(datos.get("mesa"), datos.get("platos"))`, sin `ahora`.
+- **Commit relacionado:** Ninguno; quedó como falso positivo en `revision_seguridad.md`.
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
-| Aceptadas | 3 |
-| Aceptadas con cambios | 1 |
-| Rechazadas | 2 |
+| Aceptadas | 7 |
+| Aceptadas con cambios | 2 |
+| Rechazadas | 3 |
 
 ## Errores que atraparon las pruebas
 
@@ -82,6 +138,19 @@ La implementación pasó las 22 pruebas en la primera corrida, así que para sab
 | Saltarse los platos malos en vez de rechazar toda la comanda | 10 |
 
 Las pruebas detectaron los cinco. Después dejé el código como estaba y volvieron a pasar las 22. El más peligroso era el último: con ese error la comanda se guardaba sin el plato malo y el mesero no se enteraba, así que a la cocina llegaba un pedido incompleto.
+
+## Errores que atrapó la revisión de la semana 6
+
+Las 22 pruebas de la semana 5 pasaban, pero solo probaban lo que manda un mesero normal. La revisión encontró cuatro problemas que esas pruebas no veían:
+
+| Id | Qué pasaba | Cómo se vio |
+|---|---|---|
+| H-01 | pytest 8.3.4 tenía una vulnerabilidad conocida | `pip-audit` |
+| H-02 | Platos en texto, un plato `None` o un nombre en lista reventaban con `AttributeError` o `TypeError`, que en la API sería un error 500 | 10 pruebas de abuso en rojo |
+| H-03 | Se aceptaba una comanda de 10 000 platos y una cantidad de mil millones | 2 pruebas de abuso en rojo |
+| H-04 | El mensaje de error devolvía entero un nombre de 5 000 caracteres con `<script>` | 1 prueba de abuso en rojo |
+
+El más serio era H-02: la función prometía lanzar `ComandaInvalida` cuando algo estaba mal, y con datos de otro tipo no lo cumplía. Lo corregí sin tocar las pruebas de la semana 5 y siguen pasando las 22.
 
 ## Reflexión final
 
