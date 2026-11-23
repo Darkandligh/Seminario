@@ -10,6 +10,7 @@ RECIBIDO = "recibido"
 # Topes provisionales hasta confirmar con el restaurante (P-01)
 MAX_PLATOS = 50
 MAX_CANTIDAD = 20
+LARGO_NOMBRE = 40
 
 MESA_INVALIDA = "La mesa debe ser un número mayor que cero"
 SIN_PLATOS = "La comanda debe tener al menos un plato"
@@ -63,7 +64,7 @@ def _validar_plato(item):
 
     nombre = item["plato"]
     if nombre not in CARTA:
-        raise FueraDeCarta(f"El plato «{nombre}» no está en la carta")
+        raise FueraDeCarta(f"El plato «{nombre[:LARGO_NOMBRE]}» no está en la carta")
 
     for mod in MODIFICACIONES:
         valor = item.get(mod)
