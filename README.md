@@ -1,13 +1,10 @@
 # A-Fénix
 
-Plataforma de comandas digitales para el restaurante chino A Fénix de Oro.
+Plataforma de comandas digitales para el restaurante chino A Fénix de Oro, en Neiva.
 
-Proyecto final del Seminario de Inteligencia Artificial Aplicada al Ciclo de Vida del Software (FET).
-Eduardo Ascencio, Ingeniería de Software, Fundación Escuela Tecnológica de Neiva - FET.
+## 1. Qué es
 
 Con A-Fénix el mesero registra la comanda en una tablet y la cocina la recibe en una pantalla en orden de llegada. El diseño completo está en mis documentos de requisitos y de diseño: Python con FastAPI y SQLite en un mini PC del restaurante (ADR-001). En este repositorio voy construyendo el proyecto por semanas, empezando por la lógica de negocio. Por ahora no hay API ni base de datos: las comandas viven en memoria.
-
-## Funcionalidad de la semana 5
 
 ### Historias de usuario
 
@@ -47,9 +44,12 @@ def registrar_comanda(mesa, items, ahora=None) -> Comanda
 |---|---|---|
 | `ComandaInvalida` | «La mesa debe ser un número mayor que cero» | La mesa es 0, negativa, texto, `None` o `True`. |
 | `ComandaInvalida` | «La comanda debe tener al menos un plato» | La lista de platos está vacía o es `None`. |
+| `ComandaInvalida` | «La comanda tiene un formato incorrecto» | Los platos no vienen en lista, un plato no es diccionario o su nombre no es texto. |
+| `ComandaInvalida` | «Una comanda tiene máximo 50 platos» | Vienen más de 50 platos. |
 | `ComandaInvalida` | «Falta la base de «Chop suey»» (y así con cada modificación) | Una modificación viene vacía. |
 | `ComandaInvalida` | «La cantidad debe ser un número mayor que cero» | La cantidad es 0, negativa o texto. |
-| `FueraDeCarta` | «El plato «...» no está en la carta» | El plato no existe en la carta. |
+| `ComandaInvalida` | «La cantidad máxima por plato es 20» | La cantidad pasa de 20. |
+| `FueraDeCarta` | «El plato «...» no está en la carta» | El plato no existe en la carta. El nombre se recorta a 40 caracteres. |
 | `FueraDeCarta` | «La proteína no está en la carta» (y así con cada modificación) | La opción no está entre las de ese plato. |
 
 `FueraDeCarta` hereda de `ComandaInvalida`. Las separé para que más adelante la API pueda responder 400 a lo que está incompleto y 422 a lo que no existe en la carta, como dice la tabla de la API del documento de diseño.
@@ -59,14 +59,15 @@ def registrar_comanda(mesa, items, ahora=None) -> Comanda
 - Si un plato está mal se rechaza toda la comanda, para que nada incompleto llegue a la cocina.
 - Las cuatro modificaciones son obligatorias en cada plato.
 - La cantidad es 1 si no se manda.
+- Los topes de 50 platos y 20 por plato son provisionales hasta confirmarlos con el restaurante (P-01).
 - La mesa solo tiene que ser un entero mayor que cero. Cuántas mesas tiene el restaurante está pendiente (P-03).
 - La carta de `afenix/carta.py` es de ejemplo. La real la tiene que validar el restaurante.
 
 **Casos límite:**
 
 - Mesa 1: se acepta. Mesa 0: error.
-- Un solo plato: se acepta. Ningún plato: error.
-- Cantidad 0: error.
+- Un solo plato: se acepta. Ningún plato: error. 50 platos: se acepta. 51: error.
+- Cantidad 20: se acepta. Cantidad 0 o 21: error.
 - `True` como mesa: error. En Python `True` es un entero que vale 1, así que hubo que descartarlo aparte.
 
 **Ejemplos:**
@@ -78,28 +79,72 @@ def registrar_comanda(mesa, items, ahora=None) -> Comanda
 | `registrar_comanda(4, [{"plato": "Chop suey", ..., "proteina": "camarón"}])` | lanza `FueraDeCarta`: «La proteína no está en la carta» |
 | `registrar_comanda(0, [...])` | lanza `ComandaInvalida`: «La mesa debe ser un número mayor que cero» |
 
-### Cómo ejecutar las pruebas
+## 2. Requisitos
 
-Necesitas Python 3.12 o más reciente.
+- Python 3.12 o más reciente.
+- Las dependencias van con versión fijada en `requirements.txt` (pruebas) y `requirements-dev.txt` (linter y auditoría).
+
+## 3. Instalación
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate        # en Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+Si solo vas a correr las pruebas basta con `pip install -r requirements.txt`. Por ahora la aplicación no usa variables de entorno; `.env.example` queda como plantilla.
+
+## 4. Ejecución
+
+Todavía no hay servidor. La función se usa desde Python:
+
+```python
+from afenix.comandas import registrar_comanda
+
+registrar_comanda(4, [{"plato": "Chop suey", "base": "arroz frito", "proteina": "res",
+                       "tamano": "familiar", "picante": "medio"}])
+```
+
+## 5. Pruebas
+
+```bash
 python -m pytest -v
+python -m pytest --cov=afenix
 ```
 
-Salen 22 pruebas: 3 normales, 4 de límite y 15 de error. Para ver la cobertura: `python -m pytest --cov=afenix`.
+Salen 37 pruebas con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`) y 15 de abuso (`tests/test_abuso_comandas.py`).
 
-## Bitácora de uso de IA
+Análisis estático y auditoría de dependencias:
 
-Está en [`bitacora_ia.md`](bitacora_ia.md).
+```bash
+ruff check afenix tests
+bandit -c pyproject.toml -r afenix
+mypy
+pip-audit -r requirements-dev.txt
+```
 
-## Estructura
+El resultado de cada uno está en [`revision_seguridad.md`](revision_seguridad.md).
+
+## 6. Estructura
 
 ```
-afenix/carta.py       carta de ejemplo con los platos y sus opciones
-afenix/comandas.py    la función registrar_comanda
-tests/                pruebas con pytest
-bitacora_ia.md        registro de lo que sugirió la IA y qué decidí
+afenix/carta.py              carta de ejemplo con los platos y sus opciones
+afenix/comandas.py           la función registrar_comanda
+tests/                       pruebas normales, de límite, de error y de abuso
+pyproject.toml               configuración de ruff, bandit y mypy
+requirements.txt             dependencias para las pruebas
+requirements-dev.txt         dependencias del linter y la auditoría
+bitacora_ia.md               registro de lo que sugirió la IA y qué decidí
+revision_seguridad.md        informe de seguridad de la semana 6
 ```
+
+## 7. Uso de IA
+
+Usé un asistente de IA para escribir las pruebas, la implementación y la revisión de seguridad. Lo que sugirió, lo que acepté o rechacé y cómo lo verifiqué está en [`bitacora_ia.md`](bitacora_ia.md). La revisión de seguridad con IA está en la sección 3 de [`revision_seguridad.md`](revision_seguridad.md).
+
+## 8. Autor y licencia
+
+Eduardo Ascencio, Ingeniería de Software, Fundación Escuela Tecnológica de Neiva - FET.
+Proyecto final del Seminario de Inteligencia Artificial Aplicada al Ciclo de Vida del Software.
+
+Uso académico. Sin licencia de código abierto por ahora.
