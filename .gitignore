@@ -7,3 +7,5 @@ venv/
 htmlcov/
 *.db
 .env
+.env.*
+!.env.example
