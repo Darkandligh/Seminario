@@ -1,0 +1,34 @@
+........F.........                                                       [100%]
+================================== FAILURES ===================================
+_______________________ test_admin_puede_cambiar_estado _______________________
+
+    def test_admin_puede_cambiar_estado():
+>       c = cambiar_estado(nueva(), "en preparación", "admin")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+evidencias\semana-7\borrador_ia\test_borrador_ia.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+comanda = Comanda(mesa=4, platos=[Plato(nombre='Chop suey', base='arroz frito', proteina='pollo', tamano='personal', picante='medio', cantidad=1)], hora_entrada=datetime.datetime(2026, 11, 28, 12, 0), estado='recibido', hora_listo=None)
+nuevo = 'en preparación', rol = 'admin', ahora = None
+
+    def cambiar_estado(
+        comanda: Comanda, nuevo: str, rol: str, ahora: datetime | None = None
+    ) -> Comanda:
+        """Pasa la comanda al estado siguiente.
+    
+        Recibe la comanda, el estado al que se quiere pasar, el rol de quien lo
+        pide y la hora del cambio; si no llega la hora se usa la del equipo.
+        Devuelve la misma comanda con el estado nuevo. Al quedar «listo» guarda
+        la hora en hora_listo.
+        Lanza SinPermiso si el rol no es la cocina, y CambioInvalido si el estado
+        no existe o no es el siguiente del actual.
+        """
+        if rol != COCINA:
+>           raise SinPermiso(SOLO_COCINA)
+E           afenix.estados.SinPermiso: Solo la cocina puede cambiar el estado
+
+afenix\estados.py:35: SinPermiso
+=========================== short test summary info ===========================
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+1 failed, 17 passed in 0.07s
