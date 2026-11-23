@@ -7,10 +7,16 @@ from afenix.carta import CARTA, MODIFICACIONES
 
 RECIBIDO = "recibido"
 
+# Topes provisionales hasta confirmar con el restaurante (P-01)
+MAX_PLATOS = 50
+MAX_CANTIDAD = 20
+
 MESA_INVALIDA = "La mesa debe ser un número mayor que cero"
 SIN_PLATOS = "La comanda debe tener al menos un plato"
 CANTIDAD_INVALIDA = "La cantidad debe ser un número mayor que cero"
 FORMATO_INVALIDO = "La comanda tiene un formato incorrecto"
+DEMASIADOS_PLATOS = f"Una comanda tiene máximo {MAX_PLATOS} platos"
+CANTIDAD_EXAGERADA = f"La cantidad máxima por plato es {MAX_CANTIDAD}"
 
 NOMBRES_MODIFICACION = {
     "base": "la base",
@@ -70,6 +76,8 @@ def _validar_plato(item):
     cantidad = item.get("cantidad", 1)
     if not _es_entero_positivo(cantidad):
         raise ComandaInvalida(CANTIDAD_INVALIDA)
+    if cantidad > MAX_CANTIDAD:
+        raise ComandaInvalida(CANTIDAD_EXAGERADA)
 
     return Plato(nombre, item["base"], item["proteina"], item["tamano"], item["picante"], cantidad)
 
@@ -86,6 +94,8 @@ def registrar_comanda(mesa, items, ahora=None):
         raise ComandaInvalida(SIN_PLATOS)
     if not isinstance(items, list):
         raise ComandaInvalida(FORMATO_INVALIDO)
+    if len(items) > MAX_PLATOS:
+        raise ComandaInvalida(DEMASIADOS_PLATOS)
 
     platos = [_validar_plato(item) for item in items]
     return Comanda(mesa=mesa, platos=platos, hora_entrada=ahora or datetime.now())
