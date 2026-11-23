@@ -1,0 +1,13 @@
+Mutación 7 en afenix/cocina.py: «if c.estado != LISTO]» -> «]»
+@@ -31 +31 @@ def comandas_para_cocina(comandas: list[Comanda]) -> list[Comanda]:
+-    pendientes = [c for c in comandas if c.estado != LISTO]
++    pendientes = [c for c in comandas ]
+
+--- suite
+FAILED tests/test_cocina.py::test_las_listas_salen_de_la_pantalla - assert [3...
+FAILED tests/test_cocina.py::test_pantalla_vacia[True] - AssertionError: asse...
+2 failed, 74 passed in 0.12s
+
+--- borrador de la IA
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+1 failed, 17 passed in 0.06s

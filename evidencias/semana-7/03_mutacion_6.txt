@@ -1,0 +1,13 @@
+Mutación 6 en afenix/cocina.py: «key=lambda c: c.hora_entrada)» -> «key=lambda c: c.hora_entrada, reverse=True)»
+@@ -32 +32 @@ def comandas_para_cocina(comandas: list[Comanda]) -> list[Comanda]:
+-    return sorted(pendientes, key=lambda c: c.hora_entrada)
++    return sorted(pendientes, key=lambda c: c.hora_entrada, reverse=True)
+
+--- suite
+FAILED tests/test_cocina.py::test_pantalla_ordena_por_hora_de_entrada - asser...
+FAILED tests/test_cocina.py::test_las_listas_salen_de_la_pantalla - assert [7...
+2 failed, 74 passed in 0.12s
+
+--- borrador de la IA
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+1 failed, 17 passed in 0.06s

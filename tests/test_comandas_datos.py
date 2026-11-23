@@ -18,13 +18,8 @@ def test_camaron_con_tilde_es_la_opcion_de_la_carta(platos_dificiles):
     assert registrar_comanda(4, [platos_dificiles["ñ y tilde"]]).platos[0].proteina == "camarón"
 
 
-def test_cantidad_en_el_tope_se_acepta(platos_dificiles):
-    # límite: 20 es el último valor válido
-    assert registrar_comanda(4, [platos_dificiles["cantidad en el tope"]]).platos[0].cantidad == 20
-
-
 def test_cantidad_justo_encima_del_tope_se_rechaza(platos_dificiles):
-    # límite: 21 es el primer valor inválido
+    # límite: 21 es el primer valor inválido; el 20 lo cubre test_abuso_comandas.py
     plato = {**platos_dificiles["cantidad en el tope"], "cantidad": 21}
     with pytest.raises(ComandaInvalida, match="La cantidad máxima por plato es 20"):
         registrar_comanda(4, [plato])
@@ -40,3 +35,19 @@ def test_turno_completo_queda_recibido(turno):
         (7, "recibido", 1), (3, "recibido", 2), (9, "recibido", 1),
         (2, "recibido", 1), (12, "recibido", 1),
     ]
+
+
+@pytest.mark.parametrize("mesa, items", [
+    (4, [{"plato": "Chop suey", "base": "", "proteina": "res",
+          "tamano": "personal", "picante": "medio"}]),   # falta la base
+    (4, [{"plato": "Chop suey", "base": "arroz frito", "proteina": "",
+          "tamano": "personal", "picante": "medio"}]),   # falta la proteína
+    (4, []),                                             # sin platos
+    (0, [{"plato": "Chop suey", "base": "arroz frito", "proteina": "res",
+          "tamano": "personal", "picante": "medio"}]),   # mesa 0
+])
+def test_lo_incompleto_no_se_marca_como_fuera_de_carta(mesa, items):
+    # Lo incompleto es 400 en la API y lo que no está en la carta es 422
+    with pytest.raises(ComandaInvalida) as error:
+        registrar_comanda(mesa, items)
+    assert type(error.value) is ComandaInvalida

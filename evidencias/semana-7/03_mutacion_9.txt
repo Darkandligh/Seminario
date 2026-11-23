@@ -1,0 +1,13 @@
+Mutación 9 en afenix/comandas.py: «if cantidad > MAX_CANTIDAD:» -> «if cantidad >= MAX_CANTIDAD:»
+@@ -89 +89 @@ def _validar_plato(item: object) -> Plato:
+-    if cantidad > MAX_CANTIDAD:
++    if cantidad >= MAX_CANTIDAD:
+
+--- suite
+FAILED tests/test_abuso_comandas.py::test_cantidad_en_el_tope_se_acepta - afe...
+FAILED tests/test_comandas_datos.py::test_cantidad_en_el_tope_se_acepta - afe...
+2 failed, 74 passed in 0.11s
+
+--- borrador de la IA
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+1 failed, 17 passed in 0.06s
