@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, TypeGuard
 
 from afenix.carta import CARTA, MODIFICACIONES
 
@@ -53,12 +54,19 @@ class Comanda:
     estado: str = RECIBIDO
 
 
-def _es_entero_positivo(valor):
+def _es_entero_positivo(valor: object) -> TypeGuard[int]:
     # bool es subclase de int en Python: sin esto, True pasaría como mesa 1
     return not isinstance(valor, bool) and isinstance(valor, int) and valor >= 1
 
 
-def _validar_plato(item):
+def _validar_plato(item: object) -> Plato:
+    """Revisa un plato contra la carta.
+
+    Recibe el diccionario de un plato tal como llega del mesero.
+    Devuelve el Plato ya validado.
+    Lanza ComandaInvalida si falta algo o tiene mal formato, y FueraDeCarta
+    si el plato o una opción no existe en la carta.
+    """
     if not isinstance(item, dict) or not isinstance(item.get("plato"), str):
         raise ComandaInvalida(FORMATO_INVALIDO)
 
@@ -83,9 +91,15 @@ def _validar_plato(item):
     return Plato(nombre, item["base"], item["proteina"], item["tamano"], item["picante"], cantidad)
 
 
-def registrar_comanda(mesa, items, ahora=None):
+def registrar_comanda(mesa: Any, items: Any, ahora: datetime | None = None) -> Comanda:
     """Valida la comanda de una mesa y la devuelve en estado recibido.
 
+    Recibe el número de la mesa, la lista de platos (diccionarios con plato,
+    base, proteina, tamano, picante y, si se quiere, cantidad) y la hora de
+    entrada; si no llega la hora se usa la del equipo.
+    Devuelve la Comanda con sus platos, la hora de entrada y estado recibido.
+    Lanza ComandaInvalida si la mesa, los platos o la cantidad no sirven, y
+    FueraDeCarta (que hereda de ComandaInvalida) si algo no está en la carta.
     Si un solo plato está mal se rechaza toda la comanda, para que nada
     incompleto llegue a la cocina.
     """
