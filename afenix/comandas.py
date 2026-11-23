@@ -10,6 +10,7 @@ RECIBIDO = "recibido"
 MESA_INVALIDA = "La mesa debe ser un número mayor que cero"
 SIN_PLATOS = "La comanda debe tener al menos un plato"
 CANTIDAD_INVALIDA = "La cantidad debe ser un número mayor que cero"
+FORMATO_INVALIDO = "La comanda tiene un formato incorrecto"
 
 NOMBRES_MODIFICACION = {
     "base": "la base",
@@ -51,7 +52,10 @@ def _es_entero_positivo(valor):
 
 
 def _validar_plato(item):
-    nombre = item.get("plato")
+    if not isinstance(item, dict) or not isinstance(item.get("plato"), str):
+        raise ComandaInvalida(FORMATO_INVALIDO)
+
+    nombre = item["plato"]
     if nombre not in CARTA:
         raise FueraDeCarta(f"El plato «{nombre}» no está en la carta")
 
@@ -80,6 +84,8 @@ def registrar_comanda(mesa, items, ahora=None):
         raise ComandaInvalida(MESA_INVALIDA)
     if not items:
         raise ComandaInvalida(SIN_PLATOS)
+    if not isinstance(items, list):
+        raise ComandaInvalida(FORMATO_INVALIDO)
 
     platos = [_validar_plato(item) for item in items]
     return Comanda(mesa=mesa, platos=platos, hora_entrada=ahora or datetime.now())
