@@ -6,6 +6,17 @@ Plataforma de comandas digitales para el restaurante chino A Fénix de Oro, en N
 
 Con A-Fénix el mesero registra la comanda en una tablet y la cocina la recibe en una pantalla en orden de llegada. El diseño completo está en mis documentos de requisitos y de diseño: Python con FastAPI y SQLite en un mini PC del restaurante (ADR-001). En este repositorio voy construyendo el proyecto por semanas, empezando por la lógica de negocio. Por ahora no hay API ni base de datos: las comandas viven en memoria.
 
+Funciones con reglas de negocio:
+
+| Archivo | Función | Historia |
+|---|---|---|
+| `afenix/comandas.py` | `registrar_comanda` | HU-01 y HU-02 (contrato abajo) |
+| `afenix/estados.py` | `cambiar_estado`: recibido → en preparación → listo, un paso a la vez; solo la cocina | HU-06 y HU-07 |
+| `afenix/cocina.py` | `minutos_espera`: minutos desde la hora de entrada | HU-05 |
+| `afenix/cocina.py` | `comandas_para_cocina`: pendientes por hora de entrada | HU-04 |
+
+Las reglas y la tabla de casos de cada una están en [`registro_pruebas.md`](registro_pruebas.md).
+
 ### Historias de usuario
 
 **HU-01. Registrar la comanda** (prioridad Must, necesidades N-01 y N-03)
@@ -112,7 +123,7 @@ python -m pytest -v
 python -m pytest --cov=afenix
 ```
 
-Salen 37 pruebas con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`) y 15 de abuso (`tests/test_abuso_comandas.py`).
+Salen 79 pruebas con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 15 de abuso de la semana 6 (`tests/test_abuso_comandas.py`) y 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`).
 
 Análisis estático y auditoría de dependencias:
 
@@ -130,12 +141,17 @@ El resultado de cada uno está en [`revision_seguridad.md`](revision_seguridad.m
 ```
 afenix/carta.py              carta de ejemplo con los platos y sus opciones
 afenix/comandas.py           la función registrar_comanda
+afenix/estados.py            cambio de estado de la comanda
+afenix/cocina.py             tiempo de espera y lista de la pantalla de cocina
 tests/                       pruebas normales, de límite, de error y de abuso
+tests/conftest.py            datos sintéticos de un turno de almuerzo
+evidencias/semana-7/         borrador de pruebas de la IA y salidas de pytest
 pyproject.toml               configuración de ruff, bandit y mypy
 requirements.txt             dependencias para las pruebas
 requirements-dev.txt         dependencias del linter y la auditoría
 bitacora_ia.md               registro de lo que sugirió la IA y qué decidí
 revision_seguridad.md        informe de seguridad de la semana 6
+registro_pruebas.md          tabla de casos, revisión de las pruebas de la IA y mutaciones
 ```
 
 ## 7. Uso de IA
