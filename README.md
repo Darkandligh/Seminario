@@ -26,12 +26,14 @@ Como mesero, quiero registrar la comanda de una mesa con los platos de la carta 
 - **Escenario 1 (comanda registrada):** dado que la mesa 4 no tiene comandas abiertas, cuando registro «Arroz frito con piña» y «Chop suey», entonces la comanda queda en estado «recibido» con la mesa 4, los dos platos y la hora de entrada.
 - **Escenario 2 (error: comanda sin platos):** dado que estoy registrando la comanda de la mesa 4, cuando intento enviarla sin ningún plato, entonces el sistema no la guarda y muestra «La comanda debe tener al menos un plato».
 
-**HU-02. Modificaciones de cada plato** (prioridad Must, necesidades N-02 y N-03)
+**HU-02. Plato y color** (prioridad Must, necesidades N-01 y N-03, versión 3 de los requisitos)
 
-Como mesero, quiero elegir la base, la proteína, el tamaño y el picante de cada plato desde la carta para que el pedido llegue a la cocina tal como lo pidió el cliente.
+Como mesero, quiero elegir el plato y su color desde la carta para que el pedido llegue a la cocina tal como lo pidió el cliente.
 
-- **Escenario 1 (plato con modificaciones):** dado que la carta tiene «Pollo General Tso's» con base arroz frito, tamaño familiar y picante medio, cuando los elijo para la mesa 4, entonces el plato queda en la comanda con esas cuatro modificaciones.
-- **Escenario 2 (error: opción fuera de la carta):** dado que la carta no tiene camarón como proteína del chop suey, cuando intento agregar «Chop suey» de camarón, entonces el sistema no lo agrega y muestra «La proteína no está en la carta».
+- **Escenario 1 (plato con color):** dado que la carta tiene «Chop suey» en color café, cuando lo elijo para la mesa 4, entonces el plato queda en el pedido con el color café.
+- **Escenario 2 (error: color que no existe):** dado que el plato no se prepara en un color, cuando intento pedirlo en ese color, entonces el sistema no lo agrega y muestra «El color no está en la carta».
+
+Hasta el 26 de noviembre esta historia pedía base, proteína, tamaño y picante, porque salió de una entrevista simulada. La entrevista real mostró que el cliente solo dice el plato y el color («dame un chop suey café»), y la historia, el código y las pruebas se cambiaron.
 
 ### Contrato de la función
 
@@ -48,7 +50,7 @@ def registrar_comanda(
 **Qué recibe:**
 
 - `mesa`: número entero de la mesa.
-- `items`: lista de platos. Cada plato es un diccionario con `plato`, `base`, `proteina`, `tamano`, `picante` y, si se quiere, `cantidad`.
+- `items`: lista de platos. Cada plato es un diccionario con `plato`, `color` y, si se quiere, `cantidad`.
 - `ahora`: hora de entrada. Si no se manda, se usa la hora del equipo. Sirve para que las pruebas no dependan del reloj.
 
 **Qué devuelve:** un objeto `Comanda` con `mesa`, `platos` (lista de `Plato` con sus cuatro modificaciones y la cantidad), `hora_entrada` y `estado = "recibido"`.
@@ -62,11 +64,11 @@ def registrar_comanda(
 | `ComandaInvalida` | «La comanda debe tener al menos un plato» | La lista de platos está vacía o es `None`. |
 | `ComandaInvalida` | «La comanda tiene un formato incorrecto» | Los platos no vienen en lista, un plato no es diccionario o su nombre no es texto. |
 | `ComandaInvalida` | «Una comanda tiene máximo 50 platos» | Vienen más de 50 platos, contando las cantidades: 3 filas de 20 son 60. |
-| `ComandaInvalida` | «Falta la base de «Chop suey»» (y así con cada modificación) | Una modificación viene vacía. |
+| `ComandaInvalida` | «Falta el color de «Chop suey»» | El color viene vacío o no viene. |
 | `ComandaInvalida` | «La cantidad debe ser un número mayor que cero» | La cantidad es 0, negativa o texto. |
 | `ComandaInvalida` | «La cantidad máxima por plato es 20» | La cantidad pasa de 20. |
 | `FueraDeCarta` | «El plato «...» no está en la carta» | El plato no existe en la carta. El nombre se recorta a 40 caracteres. |
-| `FueraDeCarta` | «La proteína no está en la carta» (y así con cada modificación) | La opción no está entre las de ese plato. |
+| `FueraDeCarta` | «El color no está en la carta» | El plato no se prepara en ese color. |
 
 `FueraDeCarta` hereda de `ComandaInvalida`. Las separé para que más adelante la API pueda responder 400 a lo que está incompleto y 422 a lo que no existe en la carta, como dice la tabla de la API del documento de diseño.
 
@@ -90,9 +92,9 @@ def registrar_comanda(
 
 | Entrada | Salida |
 |---|---|
-| `registrar_comanda(4, [{"plato": "Chop suey", "base": "arroz frito", "proteina": "res", "tamano": "familiar", "picante": "medio"}])` | `Comanda(mesa=4, platos=[Plato("Chop suey", ...)], estado="recibido")` |
+| `registrar_comanda(4, [{"plato": "Chop suey", "color": "café"}])` | `Comanda(mesa=4, platos=[Plato("Chop suey", "café", 1)], estado="recibido")` |
 | `registrar_comanda(4, [])` | lanza `ComandaInvalida`: «La comanda debe tener al menos un plato» |
-| `registrar_comanda(4, [{"plato": "Chop suey", ..., "proteina": "camarón"}])` | lanza `FueraDeCarta`: «La proteína no está en la carta» |
+| `registrar_comanda(4, [{"plato": "Chop suey", "color": "verde"}])` | lanza `FueraDeCarta`: «El color no está en la carta» |
 | `registrar_comanda(0, [...])` | lanza `ComandaInvalida`: «La mesa debe ser un número mayor que cero» |
 
 ## 2. Requisitos
@@ -117,8 +119,7 @@ Todavía no hay servidor. La función se usa desde Python:
 ```python
 from afenix.comandas import registrar_comanda
 
-registrar_comanda(4, [{"plato": "Chop suey", "base": "arroz frito", "proteina": "res",
-                       "tamano": "familiar", "picante": "medio"}])
+registrar_comanda(4, [{"plato": "Chop suey", "color": "café"}])
 ```
 
 ## 5. Pruebas
@@ -128,7 +129,7 @@ python -m pytest -v
 python -m pytest --cov=afenix
 ```
 
-Salen 95 pruebas que pasan, con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 17 de abuso de la semana 6 (`tests/test_abuso_comandas.py`), 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`) , 12 de aceptación, una por escenario de las historias (`tests/test_aceptacion.py`), y 2 de la entrevista real (`tests/test_entrevista_real.py`). Además hay 5 pruebas de aceptación marcadas `xfail`: son diferencias reales entre el criterio y el código, explicadas en la evaluación de historias del informe final.
+Salen 93 pruebas que pasan, con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 17 de abuso de la semana 6 (`tests/test_abuso_comandas.py`), 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`) , 12 de aceptación, una por escenario de las historias (`tests/test_aceptacion.py`), y 2 de la entrevista real (`tests/test_entrevista_real.py`). Además hay 3 pruebas de aceptación marcadas `xfail`: son diferencias reales entre el criterio y el código, explicadas en la evaluación de historias del informe final.
 
 Las mismas pruebas, el linter, mypy, bandit y pip-audit corren solos en GitHub Actions cada vez que se sube un cambio (`.github/workflows/ci.yml`). La revisión de ese pipeline está en [`docs/revision_configuracion.md`](docs/revision_configuracion.md).
 
