@@ -229,12 +229,21 @@ Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code den
 - **Verificación:** 12 pasan y 3 quedan como diferencias conocidas. Leí cada mensaje real del código para confirmar que no coincide con el del criterio.
 - **Commit relacionado:** «Pruebas de aceptación: un caso por escenario de las historias HU-01 a HU-07»
 
+### Entrada 25
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** Le di a la IA mis respuestas reales al cuestionario del restaurante, como cajero, y le pedí compararlas con las historias de la versión 2, que salieron de una entrevista simulada.
+- **Decisión:** Aceptada con cambios
+- **Por qué:** La comparación mostró que la entrevista simulada había inventado las cuatro modificaciones de cada plato (base, proteína, tamaño y picante): el cliente solo pide el plato y el color. También había puesto otros números de personal y de pedidos y había dejado por fuera los domicilios. Acepté pasar la HU-02 a «plato y color» y agregar la HU-09 de domicilios. Cambié las historias y no mis respuestas, y declaré en el documento que soy a la vez el que responde y el que desarrolla.
+- **Verificación:** Revisé cada cita del documento de requisitos v3 contra mis respuestas escritas. Con el dato real de 12 mesas puse el tope en el código, primero con la prueba en rojo. Las pruebas de la HU-02 nueva quedaron marcadas como diferencia (`xfail`) porque el código todavía pide las cuatro modificaciones.
+- **Commit relacionado:** d07ecaa y b3395a8 (tope de 12 mesas) y f3e922a «Requisitos v3 con la entrevista real; HU-02 cambia a plato y color (xfail)»
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
 | Aceptadas | 14 |
-| Aceptadas con cambios | 6 |
+| Aceptadas con cambios | 7 |
 | Rechazadas | 4 |
 
 ## Errores que atraparon las pruebas
