@@ -34,7 +34,7 @@ Seguí el ciclo de vida completo, una fase por módulo del seminario, y en cada 
 | 5. Pruebas | Tabla de casos con particiones, límites y tabla de decisión; borrador de pruebas de la IA revisado; datos sintéticos; 11 errores metidos a propósito; reporte de defecto | Claude Code en VS Code | [registro_pruebas.md](registro_pruebas.md), [evidencias/semana-7](evidencias/semana-7), [D-01](docs/defectos/D-01.md) | Cada esperado sale de una historia, no del código. Corrí el borrador de la IA contra los 11 errores |
 | 6. Operación | Pipeline de GitHub Actions generado con IA y revisado con la lista de revisión de pipelines del curso | Claude (chat) | [ci.yml](.github/workflows/ci.yml), [revision_configuracion.md](docs/revision_configuracion.md) | Ejecución en verde, error a propósito en rojo y otra vez en verde |
 
-Todas las decisiones con IA están en la [bitácora](bitacora_ia.md): 23 entradas, 13 aceptadas, 6 aceptadas con cambios y 4 rechazadas.
+Todas las decisiones con IA están en la [bitácora](bitacora_ia.md): 24 entradas, 14 aceptadas, 6 aceptadas con cambios y 4 rechazadas.
 
 ## 4. Verificación: lo que la IA hizo mal y cómo lo encontré
 
