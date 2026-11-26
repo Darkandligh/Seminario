@@ -9,7 +9,7 @@ from afenix.carta import CARTA, MODIFICACIONES
 RECIBIDO = "recibido"
 
 # Topes provisionales hasta confirmar con el restaurante (P-01)
-MAX_PLATOS = 49
+MAX_PLATOS = 50
 MAX_CANTIDAD = 20
 LARGO_NOMBRE = 40
 
