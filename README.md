@@ -49,7 +49,7 @@ def registrar_comanda(
 | `ComandaInvalida` | «La mesa debe ser un número mayor que cero» | La mesa es 0, negativa, texto, `None` o `True`. |
 | `ComandaInvalida` | «La comanda debe tener al menos un plato» | La lista de platos está vacía o es `None`. |
 | `ComandaInvalida` | «La comanda tiene un formato incorrecto» | Los platos no vienen en lista, un plato no es diccionario o su nombre no es texto. |
-| `ComandaInvalida` | «Una comanda tiene máximo 50 platos» | Vienen más de 50 platos. |
+| `ComandaInvalida` | «Una comanda tiene máximo 50 platos» | Vienen más de 50 platos, contando las cantidades: 3 filas de 20 son 60. |
 | `ComandaInvalida` | «Falta la base de «Chop suey»» (y así con cada modificación) | Una modificación viene vacía. |
 | `ComandaInvalida` | «La cantidad debe ser un número mayor que cero» | La cantidad es 0, negativa o texto. |
 | `ComandaInvalida` | «La cantidad máxima por plato es 20» | La cantidad pasa de 20. |
@@ -116,7 +116,7 @@ python -m pytest -v
 python -m pytest --cov=afenix
 ```
 
-Salen 37 pruebas con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`) y 15 de abuso (`tests/test_abuso_comandas.py`).
+Salen 39 pruebas con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`) y 17 de abuso (`tests/test_abuso_comandas.py`).
 
 Análisis estático y auditoría de dependencias:
 

@@ -98,7 +98,8 @@ def registrar_comanda(mesa: Any, items: Any, ahora: datetime | None = None) -> C
     base, proteina, tamano, picante y, si se quiere, cantidad) y la hora de
     entrada; si no llega la hora se usa la del equipo.
     Devuelve la Comanda con sus platos, la hora de entrada y estado recibido.
-    Lanza ComandaInvalida si la mesa, los platos o la cantidad no sirven, y
+    Lanza ComandaInvalida si la mesa, los platos o la cantidad no sirven, o si
+    la comanda pasa de MAX_PLATOS platos sumando las cantidades, y
     FueraDeCarta (que hereda de ComandaInvalida) si algo no está en la carta.
     Si un solo plato está mal se rechaza toda la comanda, para que nada
     incompleto llegue a la cocina.
@@ -113,4 +114,6 @@ def registrar_comanda(mesa: Any, items: Any, ahora: datetime | None = None) -> C
         raise ComandaInvalida(DEMASIADOS_PLATOS)
 
     platos = [_validar_plato(item) for item in items]
+    if sum(plato.cantidad for plato in platos) > MAX_PLATOS:
+        raise ComandaInvalida(DEMASIADOS_PLATOS)
     return Comanda(mesa=mesa, platos=platos, hora_entrada=ahora or datetime.now())
