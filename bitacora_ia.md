@@ -144,11 +144,20 @@ Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code den
 - **Verificación:** El merge no tuvo conflictos y pasan las 39 pruebas.
 - **Commit relacionado:** 872e714 (en `semana-5`) y 69f0f40 «Trae de semana-5 la firma con tipos y la reflexión final»
 
+### Entrada 16
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** Revisión del trabajo del agente. Claude Code hizo las correcciones de la semana 6 como agente, trabajando en la rama `semana-6`, separada de `semana-5`.
+- **Decisión:** Aceptada
+- **Por qué:** Antes de entregar revisé su diff completo en GitHub (comparación `7f1f11d...semana-6`): los topes en `comandas.py`, la revisión de formato, el recorte del nombre en el mensaje y las pruebas de abuso.
+- **Verificación:** En el diff no aparece `tests/test_registrar_comanda.py`, así que el agente no tocó las pruebas de la semana 5. Pasan las 39 pruebas.
+- **Commit relacionado:** Todos los de la rama `semana-6`, desde 4bd1861 hasta este.
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
-| Aceptadas | 9 |
+| Aceptadas | 10 |
 | Aceptadas con cambios | 3 |
 | Rechazadas | 3 |
 
