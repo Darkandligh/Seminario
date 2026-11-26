@@ -3,11 +3,12 @@
 Proyecto: A-Fénix, plataforma de comandas digitales para el restaurante chino A Fénix de Oro\
 Estudiante: Eduardo Ascencio · Ingeniería de Software · Fundación Escuela Tecnológica de Neiva - FET\
 Repositorio: https://github.com/Darkandligh/Seminario\
+Video de la sustentación: [PEGA AQUÍ EL ENLACE DE TU VIDEO]\
 Fecha: 2026-11-26
 
 ## 1. Resumen
 
-En A Fénix de Oro el mesero anota los pedidos en una libreta y lleva la hoja a la cocina. A veces la cocina no entiende la letra o se pierde una hoja, y el plato sale mal o tarde. A-Fénix reemplaza la hoja: el mesero registra la comanda en una tablet con la base, la proteína, el tamaño y el picante de cada plato, y la cocina la ve en una pantalla en orden de llegada y marca cuándo está lista. Usé IA en las seis fases: para la propuesta, los requisitos, el diseño, el código, las pruebas y el pipeline. El resultado principal de la verificación es que la IA se equivocó en todas las fases, sobre todo inventando cosas que nadie pidió, y que la mayoría de esos errores solo aparecieron al compararlos con los requisitos o al romper el código a propósito. Hoy el proyecto tiene 81 pruebas con 100 % de cobertura de la lógica del negocio y un pipeline que las corre en cada cambio.
+En A Fénix de Oro el mesero anota los pedidos en una libreta y lleva la hoja a la cocina. A veces la cocina no entiende la letra o se pierde una hoja, y el plato sale mal o tarde. A-Fénix reemplaza la hoja: el mesero registra la comanda en una tablet con la base, la proteína, el tamaño y el picante de cada plato, y la cocina la ve en una pantalla en orden de llegada y marca cuándo está lista. Usé IA en las seis fases: para la propuesta, los requisitos, el diseño, el código, las pruebas y el pipeline. El resultado principal de la verificación es que la IA se equivocó en todas las fases, sobre todo inventando cosas que nadie pidió, y que la mayoría de esos errores solo aparecieron al compararlos con los requisitos o al romper el código a propósito. Evalué cada historia de usuario contra sus escenarios de aceptación: de 16 escenarios, 9 se cumplen completos, 3 en parte y 4 son de historias que no alcancé a construir. El proyecto tiene 93 pruebas que pasan, con 100 % de cobertura de la lógica del negocio, y un pipeline que las corre en cada cambio.
 
 ## 2. Problema y usuario
 
@@ -18,6 +19,11 @@ Lo que necesitan es que el pedido llegue a la cocina completo y legible, en orde
 Evidencia: [propuesta del módulo 1](docs/modulos/S2_Propuesta.pdf) y [documento de requisitos con la entrevista del módulo 2](docs/modulos/S3_Requisitos.pdf), anexo A. La entrevista es simulada; lo explico en la sección 6.
 
 ## 3. La IA en el ciclo de vida
+
+Seguí el ciclo de vida completo, una fase por módulo del seminario, y en cada fase la IA hizo una parte y yo la revisé. Cuando algo fallaba en las pruebas o en el pipeline, volvía a la fase de requisitos o a la de código, no a cambiar la prueba.
+
+![Ciclo de vida de A-Fénix con IA](docs/ciclo_vida.png)
+
 
 | Módulo y fase | Qué hice con IA | Herramienta | Evidencia | Cómo verifiqué |
 |---|---|---|---|---|
@@ -54,9 +60,32 @@ La arquitectura es un monolito web en Python con FastAPI y SQLite, instalado en 
 
 De las 8 historias terminé la lógica de 6. Registrar la comanda (HU-01) y elegir las modificaciones desde la carta (HU-02) están en `afenix/comandas.py`. La pantalla de cocina en orden de llegada (HU-04) y el tiempo de espera (HU-05) están en `afenix/cocina.py`. El cambio de estado paso a paso (HU-06) y la regla de que solo la cocina lo cambia (HU-07), con su prueba de abuso del rol, están en `afenix/estados.py`. Quedaron pendientes HU-03, que la comanda llegue sola a la cocina, porque necesita la API y el WebSocket, y HU-08, la consulta del estado por mesa.
 
-Hay 81 pruebas, entre normales, de límite, de error y de abuso, con 100 % de cobertura de `afenix/`. El pipeline las corre junto con ruff, mypy, bandit y pip-audit en cada cambio ([última ejecución del pipeline en main](https://github.com/Darkandligh/Seminario/actions?query=branch%3Amain)).
+### Evaluación de las historias de usuario
 
-No alcancé a hacer la API, la base de datos ni las pantallas. El seminario se centró en la lógica y en cómo verificarla, y preferí terminar bien 6 historias que dejar las 8 a medias. También quedan preguntas para el restaurante: cuántas mesas tiene (P-03), si los topes de 50 platos y 20 por plato le sirven (P-01) y si un pedido marcado listo por error se puede devolver (P-06).
+Para evaluar las historias escribí una prueba por cada escenario de aceptación del documento de requisitos, con los mismos datos del escenario: la mesa 4 con arroz frito con piña y chop suey, la mesa 2 a las 12:05 y la mesa 6 a las 12:01, y así con todos ([tests/test_aceptacion.py](tests/test_aceptacion.py)). Cada prueba comprueba todo el «entonces» del escenario, no solo una parte. Cuando el código no cumple el criterio, la prueba queda marcada como diferencia conocida (`xfail`) en lugar de cambiarla para que pase.
+
+| Historia | Prioridad | Escenario | Resultado | Qué encontré |
+|---|---|---|---|---|
+| HU-01 Registrar la comanda | Must | 1. Comanda registrada | Cumple | Queda «recibido» con mesa, platos y hora |
+| | | 2. Comanda sin platos | Cumple | Mismo mensaje del criterio |
+| HU-02 Modificaciones desde la carta | Must | 1. Plato con modificaciones | Cumple | Guarda las cuatro modificaciones |
+| | | 2. Opción fuera de la carta | Cumple | «La proteína no está en la carta» |
+| HU-03 La comanda llega a la cocina | Must | 1 y 2 | Sin construir | Necesita la API y el WebSocket |
+| HU-04 Cocina en orden de llegada | Must | 1. Orden por llegada | Cumple | La mesa 6 sale antes que la 2 |
+| | | 2. Comanda lista | Cumple | No aparece en la pantalla |
+| HU-05 Tiempo de espera | Should | 1. Tiempo a la vista | Cumple | 12 minutos |
+| | | 2. Hora del equipo errada | En parte | No muestra un tiempo negativo, pero el mensaje no es «Revisa la hora del equipo» |
+| HU-06 Cambio de estado | Should | 1. Pedido listo | Cumple | Guarda las 12:24 como hora de entrega |
+| | | 2. Salto de estado | En parte | El estado no cambia, pero el mensaje no es el del criterio |
+| HU-07 Solo la cocina cambia el estado | Should | 1. Cambio desde la cocina | En parte | Cambia el estado, pero no guarda quién lo hizo ni a qué hora |
+| | | 2. Cambio desde el salón | Cumple | Lo rechaza y el estado no cambia |
+| HU-08 Consulta por mesa | Could | 1 y 2 | Sin construir | Pendiente |
+
+De los 16 escenarios, 9 se cumplen completos, 3 en parte y 4 son de las dos historias que no construí. De las historias Must, tres están completas (HU-01, HU-02 y HU-04) y una sin construir (HU-03). Las tres diferencias son reales y no las había visto antes: las pruebas de la semana 7 revisaban que hubiera un error, pero no comparaban el mensaje con el del criterio, y ninguna revisaba que el cambio de estado guardara quién lo hizo. La de HU-07 es la más importante, porque el modelo de datos sí tiene la entidad CambioEstado para eso y el código no la usa. Las dejo como pendientes en lugar de esconderlas.
+
+Hay 93 pruebas que pasan, entre normales, de límite, de error, de abuso y de aceptación, con 100 % de cobertura de `afenix/`, y 3 pruebas de aceptación marcadas como diferencias conocidas (ver la evaluación de historias). El pipeline las corre junto con ruff, mypy, bandit y pip-audit en cada cambio ([última ejecución del pipeline en main](https://github.com/Darkandligh/Seminario/actions?query=branch%3Amain)).
+
+No alcancé a hacer la API, la base de datos ni las pantallas. El seminario se centró en la lógica y en cómo verificarla, y preferí terminar bien 6 historias que dejar las 8 a medias. También quedan preguntas para el restaurante: cuántas mesas tiene (P-03), si los topes de 50 platos y 20 por plato le sirven (P-01) y si un pedido marcado listo por error se puede devolver (P-06). También quedan las tres diferencias de la evaluación de historias: los dos mensajes que no son los del criterio y guardar quién cambió el estado y a qué hora.
 
 ## 6. Reflexión ética y legal
 

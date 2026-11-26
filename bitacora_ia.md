@@ -220,11 +220,20 @@ Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code den
 - **Verificación:** Seguí los pasos en el commit 69f0f40, antes de la corrección: la comanda de 3 filas de 20 quedó «recibido» con 60 platos, como dice el reporte.
 - **Commit relacionado:** el de `docs/defectos/D-01.md`.
 
+### Entrada 24
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** «Escribe una prueba de aceptación por cada escenario Gherkin de HU-01 a HU-07, con los datos exactos del escenario, que compruebe todo el entonces.» La IA escribió 15 pruebas.
+- **Decisión:** Aceptada
+- **Por qué:** Revisé cada prueba contra su escenario del documento de requisitos. Tres no pasaban, y en las tres el problema era el código, no la prueba: dos mensajes de error no son los del criterio y el cambio de estado no guarda quién lo hizo ni a qué hora. No cambié las pruebas para que pasaran: las marqué `xfail` con la razón y quedaron en la evaluación de historias del informe final.
+- **Verificación:** 12 pasan y 3 quedan como diferencias conocidas. Leí cada mensaje real del código para confirmar que no coincide con el del criterio.
+- **Commit relacionado:** «Pruebas de aceptación: un caso por escenario de las historias HU-01 a HU-07»
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
-| Aceptadas | 13 |
+| Aceptadas | 14 |
 | Aceptadas con cambios | 6 |
 | Rechazadas | 4 |
 

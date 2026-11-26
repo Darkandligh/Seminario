@@ -127,7 +127,7 @@ python -m pytest -v
 python -m pytest --cov=afenix
 ```
 
-Salen 81 pruebas con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 17 de abuso de la semana 6 (`tests/test_abuso_comandas.py`) y 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`).
+Salen 93 pruebas que pasan, con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 17 de abuso de la semana 6 (`tests/test_abuso_comandas.py`), 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`) y 12 de aceptación, una por escenario de las historias (`tests/test_aceptacion.py`). Además hay 3 pruebas de aceptación marcadas `xfail`: son diferencias reales entre el criterio y el código, explicadas en la evaluación de historias del informe final.
 
 Las mismas pruebas, el linter, mypy, bandit y pip-audit corren solos en GitHub Actions cada vez que se sube un cambio (`.github/workflows/ci.yml`). La revisión de ese pipeline está en [`docs/revision_configuracion.md`](docs/revision_configuracion.md).
 
@@ -149,7 +149,8 @@ afenix/carta.py              carta de ejemplo con los platos y sus opciones
 afenix/comandas.py           la función registrar_comanda
 afenix/estados.py            cambio de estado de la comanda
 afenix/cocina.py             tiempo de espera y lista de la pantalla de cocina
-tests/                       pruebas normales, de límite, de error y de abuso
+tests/                       pruebas normales, de límite, de error, de abuso y de aceptación
+docs/ciclo_vida.png          diagrama del ciclo de vida con IA
 tests/conftest.py            datos sintéticos de un turno de almuerzo
 evidencias/semana-7/         borrador de pruebas de la IA y salidas de pytest
 evidencias/entrega-final/         borrador del pipeline que generó la IA
