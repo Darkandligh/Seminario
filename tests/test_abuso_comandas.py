@@ -58,3 +58,15 @@ def test_mensaje_no_repite_un_nombre_larguisimo():
     with pytest.raises(FueraDeCarta) as error:
         registrar_comanda(4, [{**BIEN, "plato": "<script>" + "A" * 5000}])
     assert len(str(error.value)) < 100
+
+
+# H-05: el tope de 50 contaba filas, no unidades; 50 filas de 20 eran 1000 platos
+
+def test_mas_de_50_unidades_en_total_se_rechaza():
+    with pytest.raises(ComandaInvalida, match="máximo 50 platos"):
+        registrar_comanda(4, [{**BIEN, "cantidad": 20}] * 3)
+
+
+def test_50_unidades_repartidas_en_varias_filas_se_acepta():
+    comanda = registrar_comanda(4, [{**BIEN, "cantidad": 10}] * 5)
+    assert sum(p.cantidad for p in comanda.platos) == 50
