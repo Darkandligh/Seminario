@@ -4,7 +4,9 @@ Cada prueba usa los datos exactos del escenario Gherkin del documento de
 requisitos (docs/modulos/S3_Requisitos.pdf, sección 4) y comprueba todo el
 «entonces». Las pruebas marcadas xfail son diferencias reales entre el
 criterio y el código: están en la evaluación de historias del informe final.
-HU-03 y HU-08 no tienen pruebas porque todavía no están construidas.
+HU-03, HU-08 y HU-09 no tienen pruebas porque todavía no están construidas.
+Los criterios son los de la versión 3 del documento de requisitos, que sale
+de la entrevista real con el restaurante.
 """
 
 from datetime import datetime
@@ -55,6 +57,9 @@ def test_hu01_e2_comanda_sin_platos():
 
 
 # ---------- HU-02. Modificaciones desde la carta ----------
+# Estas dos pruebas son del criterio de la versión 2 (base, proteína, tamaño y
+# picante), que salió de la entrevista simulada. La entrevista real cambió la
+# HU-02 a «plato y color»: ver las pruebas xfail de abajo.
 
 def test_hu02_e1_plato_con_modificaciones():
     # Dado que la carta tiene «Pollo General Tso's» con arroz frito, familiar y picante medio,
@@ -72,6 +77,21 @@ def test_hu02_e2_opcion_fuera_de_la_carta():
     # entonces no lo agrega y muestra «La proteína no está en la carta».
     with pytest.raises(FueraDeCarta, match=r"^La proteína no está en la carta$"):
         registrar_comanda(4, [plato("Chop suey", proteina="camarón")])
+
+
+@pytest.mark.xfail(strict=True, reason="HU-02 versión 3: el cliente pide plato y color; "
+                   "el código todavía pide base, proteína, tamaño y picante")
+def test_hu02_v3_e1_plato_con_color():
+    # Dado que la carta tiene «Chop suey» en color café, cuando lo elijo para la mesa 4,
+    # entonces el plato queda en el pedido con el color café.
+    c = registrar_comanda(4, [{"plato": "Chop suey", "color": "café"}])
+    assert c.platos[0].color == "café"
+
+
+@pytest.mark.xfail(strict=True, reason="HU-02 versión 3: falta validar el color contra la carta")
+def test_hu02_v3_e2_color_que_no_existe():
+    with pytest.raises(FueraDeCarta, match=r"^El color no está en la carta$"):
+        registrar_comanda(4, [{"plato": "Chop suey", "color": "verde"}])
 
 
 # ---------- HU-04. Cocina en orden de llegada ----------

@@ -58,6 +58,7 @@ def registrar_comanda(
 | Excepción | Mensaje | Cuándo |
 |---|---|---|
 | `ComandaInvalida` | «La mesa debe ser un número mayor que cero» | La mesa es 0, negativa, texto, `None` o `True`. |
+| `ComandaInvalida` | «El restaurante tiene 12 mesas» | La mesa es mayor que 12. Sale de la entrevista real (P-03). |
 | `ComandaInvalida` | «La comanda debe tener al menos un plato» | La lista de platos está vacía o es `None`. |
 | `ComandaInvalida` | «La comanda tiene un formato incorrecto» | Los platos no vienen en lista, un plato no es diccionario o su nombre no es texto. |
 | `ComandaInvalida` | «Una comanda tiene máximo 50 platos» | Vienen más de 50 platos, contando las cantidades: 3 filas de 20 son 60. |
@@ -127,7 +128,7 @@ python -m pytest -v
 python -m pytest --cov=afenix
 ```
 
-Salen 93 pruebas que pasan, con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 17 de abuso de la semana 6 (`tests/test_abuso_comandas.py`), 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`) y 12 de aceptación, una por escenario de las historias (`tests/test_aceptacion.py`). Además hay 3 pruebas de aceptación marcadas `xfail`: son diferencias reales entre el criterio y el código, explicadas en la evaluación de historias del informe final.
+Salen 95 pruebas que pasan, con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 17 de abuso de la semana 6 (`tests/test_abuso_comandas.py`), 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`) , 12 de aceptación, una por escenario de las historias (`tests/test_aceptacion.py`), y 2 de la entrevista real (`tests/test_entrevista_real.py`). Además hay 5 pruebas de aceptación marcadas `xfail`: son diferencias reales entre el criterio y el código, explicadas en la evaluación de historias del informe final.
 
 Las mismas pruebas, el linter, mypy, bandit y pip-audit corren solos en GitHub Actions cada vez que se sube un cambio (`.github/workflows/ci.yml`). La revisión de ese pipeline está en [`docs/revision_configuracion.md`](docs/revision_configuracion.md).
 
