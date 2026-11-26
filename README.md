@@ -27,7 +27,11 @@ Como mesero, quiero elegir la base, la proteína, el tamaño y el picante de cad
 Archivo: `afenix/comandas.py`
 
 ```python
-def registrar_comanda(mesa, items, ahora=None) -> Comanda
+def registrar_comanda(
+    mesa: int,
+    items: list[dict[str, str | int]],
+    ahora: datetime | None = None,
+) -> Comanda
 ```
 
 **Qué recibe:**
