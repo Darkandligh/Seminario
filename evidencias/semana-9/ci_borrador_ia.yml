@@ -1,0 +1,27 @@
+# Borrador generado por Claude (claude.ai) con el prompt:
+# "Escribe un workflow de GitHub Actions para mi proyecto de Python con pytest".
+# Se guarda sin cambios como evidencia. La versión revisada está en .github/workflows/ci.yml.
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run tests
+        run: pytest

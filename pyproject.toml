@@ -5,6 +5,8 @@ description = "Plataforma de comandas digitales para el restaurante A Fénix de 
 requires-python = ">=3.12"
 
 [tool.ruff]
+# evidencias/ guarda borradores de la IA sin cambios; no son código del proyecto
+extend-exclude = ["evidencias"]
 line-length = 100
 target-version = "py312"
 
@@ -14,6 +16,8 @@ select = ["E", "W", "F", "I", "B", "UP", "S", "SIM", "RUF"]
 [tool.ruff.lint.per-file-ignores]
 # assert es la forma normal de comprobar en pytest
 "tests/*" = ["S101"]
+# Dos líneas largas en las pruebas de la semana 5, que no se modifican (ver revision_seguridad.md)
+"tests/test_registrar_comanda.py" = ["S101", "E501"]
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
