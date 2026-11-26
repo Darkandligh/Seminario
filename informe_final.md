@@ -54,7 +54,7 @@ La arquitectura es un monolito web en Python con FastAPI y SQLite, instalado en 
 
 De las 8 historias terminé la lógica de 6. Registrar la comanda (HU-01) y elegir las modificaciones desde la carta (HU-02) están en `afenix/comandas.py`. La pantalla de cocina en orden de llegada (HU-04) y el tiempo de espera (HU-05) están en `afenix/cocina.py`. El cambio de estado paso a paso (HU-06) y la regla de que solo la cocina lo cambia (HU-07), con su prueba de abuso del rol, están en `afenix/estados.py`. Quedaron pendientes HU-03, que la comanda llegue sola a la cocina, porque necesita la API y el WebSocket, y HU-08, la consulta del estado por mesa.
 
-Hay 81 pruebas, entre normales, de límite, de error y de abuso, con 100 % de cobertura de `afenix/`. El pipeline las corre junto con ruff, mypy, bandit y pip-audit en cada cambio ([ejecuciones del pipeline](https://github.com/Darkandligh/Seminario/actions)).
+Hay 81 pruebas, entre normales, de límite, de error y de abuso, con 100 % de cobertura de `afenix/`. El pipeline las corre junto con ruff, mypy, bandit y pip-audit en cada cambio ([última ejecución del pipeline en main](https://github.com/Darkandligh/Seminario/actions?query=branch%3Amain)).
 
 No alcancé a hacer la API, la base de datos ni las pantallas. El seminario se centró en la lógica y en cómo verificarla, y preferí terminar bien 6 historias que dejar las 8 a medias. También quedan preguntas para el restaurante: cuántas mesas tiene (P-03), si los topes de 50 platos y 20 por plato le sirven (P-01) y si un pedido marcado listo por error se puede devolver (P-06).
 
