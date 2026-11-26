@@ -58,6 +58,7 @@ def registrar_comanda(
 | Excepción | Mensaje | Cuándo |
 |---|---|---|
 | `ComandaInvalida` | «La mesa debe ser un número mayor que cero» | La mesa es 0, negativa, texto, `None` o `True`. |
+| `ComandaInvalida` | «El restaurante tiene 12 mesas» | La mesa es mayor que 12. Sale de la entrevista real (P-03). |
 | `ComandaInvalida` | «La comanda debe tener al menos un plato» | La lista de platos está vacía o es `None`. |
 | `ComandaInvalida` | «La comanda tiene un formato incorrecto» | Los platos no vienen en lista, un plato no es diccionario o su nombre no es texto. |
 | `ComandaInvalida` | «Una comanda tiene máximo 50 platos» | Vienen más de 50 platos, contando las cantidades: 3 filas de 20 son 60. |

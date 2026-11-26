@@ -10,10 +10,13 @@ RECIBIDO = "recibido"
 
 # Topes provisionales hasta confirmar con el restaurante (P-01)
 MAX_PLATOS = 50
+# Respuesta 10 de la entrevista real (P-03)
+MAX_MESAS = 12
 MAX_CANTIDAD = 20
 LARGO_NOMBRE = 40
 
 MESA_INVALIDA = "La mesa debe ser un número mayor que cero"
+MESA_INEXISTENTE = f"El restaurante tiene {MAX_MESAS} mesas"
 SIN_PLATOS = "La comanda debe tener al menos un plato"
 CANTIDAD_INVALIDA = "La cantidad debe ser un número mayor que cero"
 FORMATO_INVALIDO = "La comanda tiene un formato incorrecto"
@@ -99,7 +102,8 @@ def registrar_comanda(mesa: Any, items: Any, ahora: datetime | None = None) -> C
     base, proteina, tamano, picante y, si se quiere, cantidad) y la hora de
     entrada; si no llega la hora se usa la del equipo.
     Devuelve la Comanda con sus platos, la hora de entrada y estado recibido.
-    Lanza ComandaInvalida si la mesa, los platos o la cantidad no sirven, o si
+    Lanza ComandaInvalida si la mesa no es un número de 1 a MAX_MESAS, si los
+    platos o la cantidad no sirven, o si
     la comanda pasa de MAX_PLATOS platos sumando las cantidades, y
     FueraDeCarta (que hereda de ComandaInvalida) si algo no está en la carta.
     Si un solo plato está mal se rechaza toda la comanda, para que nada
@@ -107,6 +111,8 @@ def registrar_comanda(mesa: Any, items: Any, ahora: datetime | None = None) -> C
     """
     if not _es_entero_positivo(mesa):
         raise ComandaInvalida(MESA_INVALIDA)
+    if mesa > MAX_MESAS:
+        raise ComandaInvalida(MESA_INEXISTENTE)
     if not items:
         raise ComandaInvalida(SIN_PLATOS)
     if not isinstance(items, list):
