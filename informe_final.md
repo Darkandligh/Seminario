@@ -34,54 +34,29 @@ Todas las decisiones con IA están en la [bitácora](bitacora_ia.md): 23 entrada
 
 ### Caso 1: requisitos que el cliente nunca pidió
 
-- **Fase:** requisitos.
-- **Qué propuso la IA:** en la semana 3, cuando mi proyecto todavía era VetCare Pro, la IA armó el documento de requisitos antes de que yo hiciera la entrevista, con respuestas supuestas del cliente: inventario de medicamentos, un rol de recepcionista, facturación y fallas de internet. Cuando pasé el proyecto a A-Fénix volvió a pasar algo parecido: al adaptar la entrevista al restaurante, dejó cosas que solo tienen sentido en una veterinaria, como el carnet de vacunación o que los clientes usaran el sistema.
-- **Qué estaba mal:** eran requisitos que el cliente nunca dijo, aunque se veían razonables.
-- **Cómo lo detecté:** comparé cada necesidad con las respuestas de la entrevista; las que no tenían una cita no tenían de dónde salir.
-- **Qué hice:** descarté el borrador y armé el documento solo con necesidades que tienen su cita, y cada historia con su necesidad de origen. En A-Fénix quité lo que no aplicaba a un restaurante ([S3, sección 7](docs/modulos/S3_Requisitos.pdf)).
+Esto pasó en la fase de requisitos. En la semana 3, cuando mi proyecto todavía era VetCare Pro, la IA armó el documento de requisitos antes de que yo hiciera la entrevista, con respuestas supuestas del cliente: inventario de medicamentos, un rol de recepcionista, facturación y fallas de internet. Nada de eso lo dijo el cliente, aunque todo se veía razonable. Lo descubrí al comparar cada necesidad con las respuestas de la entrevista, porque las que no tenían una cita no tenían de dónde salir. Descarté ese borrador y desde ahí cada necesidad lleva su cita y cada historia su necesidad de origen. Cuando pasé el proyecto a A-Fénix volvió a pasar algo parecido: al adaptar la entrevista al restaurante, la IA dejó cosas que solo tienen sentido en una veterinaria, como el carnet de vacunación o que los clientes usaran el sistema, y las quité ([S3, sección 7](docs/modulos/S3_Requisitos.pdf)).
 
 ### Caso 2: un tope de seguridad que no protegía nada
 
-- **Fase:** código.
-- **Qué propuso la IA:** en la revisión de seguridad el agente puso un tope de 50 platos por comanda (H-03), comparando el número de filas de la lista.
-- **Qué estaba mal:** cada fila tiene su cantidad, así que 50 filas de cantidad 20 eran 1000 platos. El tope se saltaba repartiendo los platos en filas.
-- **Cómo lo detecté:** en la segunda revisión, con el prompt de la semana que pide separar problemas seguros de sospechas y comprobar cada uno llamando la función. Con 3 filas de 20 la comanda quedó «recibido» con 60 platos.
-- **Qué hice:** primero escribí la prueba de abuso en rojo ([3556eef](https://github.com/Darkandligh/Seminario/commit/3556eef)) y después la corrección, que suma las cantidades ([affc4b8](https://github.com/Darkandligh/Seminario/commit/affc4b8)). Quedó como H-05 en el informe de seguridad y como el defecto [D-01](docs/defectos/D-01.md).
+Este fue en el código. En la revisión de seguridad el agente puso un tope de 50 platos por comanda (H-03), pero contaba las filas de la lista y no los platos. Como cada fila tiene su cantidad, 50 filas de cantidad 20 eran 1000 platos, y el tope se saltaba repartiendo los platos en filas. Lo encontré en la segunda revisión, con el prompt de la semana que pide separar los problemas seguros de las sospechas y comprobar cada uno llamando la función: con 3 filas de 20 la comanda quedó registrada con 60 platos. Primero escribí la prueba de abuso en rojo ([3556eef](https://github.com/Darkandligh/Seminario/commit/3556eef)) y después la corrección, que suma las cantidades ([affc4b8](https://github.com/Darkandligh/Seminario/commit/affc4b8)). Quedó como H-05 en el informe de seguridad y como el defecto [D-01](docs/defectos/D-01.md).
 
 ### Caso 3: pruebas que pasaban aunque el código estuviera mal
 
-- **Fase:** pruebas.
-- **Qué propuso la IA:** un borrador de pruebas para el cambio de estado y la pantalla de cocina. Incluía `assert len(resultado) == 3` para revisar el orden de la pantalla, `assert c.hora_listo is not None` para la hora de entrega y una prueba de que un «admin» puede cambiar el estado.
-- **Qué estaba mal:** las dos primeras son débiles: pasan con el orden al revés y con cualquier hora. La tercera es una regla inventada: A-Fénix no tiene rol de administrador y HU-07 dice que solo la cocina cambia el estado.
-- **Cómo lo detecté:** la del admin falló y revisé HU-07 antes de tocar el código. Para las débiles metí 11 errores a propósito: el borrador no habría detectado 7.
-- **Qué hice:** descarté o corregí 11 pruebas del borrador y agregué las que faltaban. La suite revisada atrapó 10 de los 11 errores; el que se escapó (una modificación vacía marcada como «fuera de carta») me llevó a agregar una prueba del tipo exacto de la excepción ([registro_pruebas.md, secciones 2 y 3](registro_pruebas.md), commit [911442f](https://github.com/Darkandligh/Seminario/commit/911442f)).
+En la fase de pruebas le pedí a la IA un borrador para el cambio de estado y la pantalla de cocina. Para revisar el orden de la pantalla usó `assert len(resultado) == 3`, para la hora de entrega `assert c.hora_listo is not None`, y además escribió una prueba de que un «admin» puede cambiar el estado. Las dos primeras pasan aunque el orden esté al revés o la hora sea cualquiera, y la tercera es una regla inventada, porque A-Fénix no tiene administrador y HU-07 dice que solo la cocina cambia el estado. La del admin falló, revisé HU-07 antes de tocar el código y vi que el error estaba en la prueba. Para encontrar las pruebas débiles metí 11 errores a propósito en el código, y el borrador no habría detectado 7. Descarté o corregí 11 pruebas del borrador y agregué las que faltaban. Mi suite atrapó 10 de los 11 errores, y el que se escapó, una modificación vacía marcada como «fuera de carta», me llevó a agregar una prueba que revisa el tipo exacto de la excepción ([registro_pruebas.md](registro_pruebas.md), commit [911442f](https://github.com/Darkandligh/Seminario/commit/911442f)).
 
 ### Caso 4: un pipeline que parecía bien
 
-- **Fase:** operación.
-- **Qué propuso la IA:** un workflow que corre `pytest` en cada push a `main`, con Python «3.x» y `pip install pytest` sin versión ([borrador](evidencias/semana-9/ci_borrador_ia.yml)).
-- **Qué estaba mal:** no revisaba las ramas por semana donde trabajo, no limitaba los permisos, usaba versiones que cambian solas y solo corría las pruebas. actionlint no marcó nada, porque el archivo es válido.
-- **Cómo lo detecté:** con la lista de revisión de la semana 9, línea por línea.
-- **Qué hice:** corregí los 6 problemas ([revision_configuracion.md](docs/revision_configuracion.md)) y comprobé que un error a propósito lo pone en rojo.
+En operación le pedí a la IA un pipeline con un prompt simple. Me dio uno que corre `pytest` en cada push a `main`, con Python «3.x» y `pip install pytest` sin versión ([borrador](evidencias/semana-9/ci_borrador_ia.yml)). Funcionaba, pero no revisaba las ramas de cada semana, que es donde trabajo, no limitaba los permisos, usaba versiones que cambian solas y solo corría las pruebas. actionlint no marcó nada porque el archivo es válido; los problemas los vi revisándolo línea por línea con la lista de la semana 9. Corregí los seis ([revision_configuracion.md](docs/revision_configuracion.md)) y comprobé que con un error a propósito el pipeline se pone en rojo.
 
 ## 5. Estado final del sistema
 
-- **Arquitectura:** monolito web en Python con FastAPI y SQLite, instalado en un mini PC del restaurante y sin depender de internet, con la pantalla de cocina conectada por cable. Ganó la matriz ponderada con 103 puntos contra 69 de la nube y 65 de microservicios. Ver el [documento de diseño y el ADR-001](docs/modulos/S4_Diseno.pdf).
-- **Funcionalidades terminadas (lógica del negocio):**
+La arquitectura es un monolito web en Python con FastAPI y SQLite, instalado en un mini PC del restaurante, que no depende de internet y tiene la pantalla de cocina conectada por cable. Ganó la matriz ponderada con 103 puntos, contra 69 de la opción en la nube y 65 de los microservicios ([documento de diseño y ADR-001](docs/modulos/S4_Diseno.pdf)).
 
-| Historia | Prioridad | Estado |
-|---|---|---|
-| HU-01 Registrar la comanda | Must | Terminada (`afenix/comandas.py`) |
-| HU-02 Modificaciones desde la carta | Must | Terminada |
-| HU-03 La comanda llega a la cocina al enviarla | Must | Pendiente: necesita la API y el WebSocket |
-| HU-04 Cocina ordenada por hora de entrada | Must | Terminada (`afenix/cocina.py`) |
-| HU-05 Tiempo de espera | Should | Terminada (`afenix/cocina.py`) |
-| HU-06 Cambio de estado paso a paso | Should | Terminada (`afenix/estados.py`) |
-| HU-07 Solo la cocina cambia el estado | Should | Terminada, con prueba de abuso del rol |
-| HU-08 El mesero consulta el estado de una mesa | Could | Pendiente |
+De las 8 historias terminé la lógica de 6. Registrar la comanda (HU-01) y elegir las modificaciones desde la carta (HU-02) están en `afenix/comandas.py`. La pantalla de cocina en orden de llegada (HU-04) y el tiempo de espera (HU-05) están en `afenix/cocina.py`. El cambio de estado paso a paso (HU-06) y la regla de que solo la cocina lo cambia (HU-07), con su prueba de abuso del rol, están en `afenix/estados.py`. Quedaron pendientes HU-03, que la comanda llegue sola a la cocina, porque necesita la API y el WebSocket, y HU-08, la consulta del estado por mesa.
 
-- **Pruebas:** 81 pruebas (normales, de límite, de error y de abuso) con 100 % de cobertura de `afenix/`. El pipeline también corre ruff, mypy, bandit y pip-audit. [Última ejecución del pipeline](https://github.com/Darkandligh/Seminario/actions).
-- **Pendientes:** la API con FastAPI, SQLite y las pantallas no alcanzaron: el seminario se centró en la lógica y su verificación, y preferí terminar bien 6 historias que dejar 8 a medias. También quedan las preguntas al restaurante: cuántas mesas tiene (P-03), si los topes de 50 platos y 20 por plato sirven (P-01) y si un pedido marcado listo por error se puede devolver (P-06).
+Hay 81 pruebas, entre normales, de límite, de error y de abuso, con 100 % de cobertura de `afenix/`. El pipeline las corre junto con ruff, mypy, bandit y pip-audit en cada cambio ([ejecuciones del pipeline](https://github.com/Darkandligh/Seminario/actions)).
+
+No alcancé a hacer la API, la base de datos ni las pantallas. El seminario se centró en la lógica y en cómo verificarla, y preferí terminar bien 6 historias que dejar las 8 a medias. También quedan preguntas para el restaurante: cuántas mesas tiene (P-03), si los topes de 50 platos y 20 por plato le sirven (P-01) y si un pedido marcado listo por error se puede devolver (P-06).
 
 ## 6. Reflexión ética y legal
 
@@ -101,11 +76,4 @@ Ahora sé escribir el contrato y las pruebas antes de pedirle código a la IA, y
 
 ## 8. Anexos
 
-- Bitácora de uso de IA: [bitacora_ia.md](bitacora_ia.md)
-- Módulo 1, propuesta: [docs/modulos/S2_Propuesta.pdf](docs/modulos/S2_Propuesta.pdf)
-- Módulo 2, requisitos y entrevista: [docs/modulos/S3_Requisitos.pdf](docs/modulos/S3_Requisitos.pdf)
-- Módulo 3, diseño, C4, ADR, modelo y API: [docs/modulos/S4_Diseno.pdf](docs/modulos/S4_Diseno.pdf)
-- Módulo 4, código y revisión de seguridad: [README.md](README.md), [revision_seguridad.md](revision_seguridad.md)
-- Módulo 5, pruebas: [registro_pruebas.md](registro_pruebas.md), [evidencias/semana-7](evidencias/semana-7), [docs/defectos/D-01.md](docs/defectos/D-01.md)
-- Módulo 6, operación: [.github/workflows/ci.yml](.github/workflows/ci.yml), [docs/revision_configuracion.md](docs/revision_configuracion.md)
-- Ramas por semana: `semana-5`, `semana-6`, `semana-7` y `semana-9`, unidas en `main`
+Todo está en el repositorio. La bitácora de uso de IA está en [bitacora_ia.md](bitacora_ia.md). Los documentos de los módulos 1 a 3 están en [docs/modulos](docs/modulos): la [propuesta](docs/modulos/S2_Propuesta.pdf), los [requisitos con la entrevista](docs/modulos/S3_Requisitos.pdf) y el [diseño con los diagramas C4, el ADR, el modelo y la API](docs/modulos/S4_Diseno.pdf). El código y la revisión de seguridad del módulo 4 están en el [README](README.md) y en [revision_seguridad.md](revision_seguridad.md). Las pruebas del módulo 5 están en [registro_pruebas.md](registro_pruebas.md), con sus evidencias en [evidencias/semana-7](evidencias/semana-7) y el reporte de defecto [D-01](docs/defectos/D-01.md). El pipeline del módulo 6 está en [ci.yml](.github/workflows/ci.yml) y su revisión en [revision_configuracion.md](docs/revision_configuracion.md). Cada semana se trabajó en su rama (`semana-5`, `semana-6`, `semana-7` y `semana-9`) y todas quedaron unidas en `main`.
