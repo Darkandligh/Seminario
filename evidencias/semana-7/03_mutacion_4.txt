@@ -1,0 +1,16 @@
+Mutación 4 en afenix/cocina.py: «total_seconds() / 60» -> «total_seconds() // 60»
+@@ -20 +20 @@ def minutos_espera(hora_entrada: datetime, ahora: datetime) -> float:
+-    return (ahora - hora_entrada).total_seconds() / 60
++    return (ahora - hora_entrada).total_seconds() // 60
+
+--- suite
+E         comparison failed
+E         comparison failed
+FAILED tests/test_cocina.py::test_minutos_de_espera[transcurrido1-0.016666666666666666]
+FAILED tests/test_cocina.py::test_minutos_de_espera[transcurrido2-1.5] - asse...
+2 failed, 74 passed in 0.12s
+
+--- borrador de la IA
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_minutos_espera[90-1.5]
+2 failed, 16 passed in 0.06s

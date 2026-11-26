@@ -1,0 +1,12 @@
+Mutación 11 de nuevo, con el caso agregado
+@@ -82 +82 @@ def _validar_plato(item: object) -> Plato:
+-            raise ComandaInvalida(f"Falta {texto} de «{nombre}»")
++            raise FueraDeCarta(f"Falta {texto} de «{nombre}»")
+
+--- suite
+FAILED tests/test_comandas_datos.py::test_lo_incompleto_no_se_marca_como_fuera_de_carta[4-items0]
+FAILED tests/test_comandas_datos.py::test_lo_incompleto_no_se_marca_como_fuera_de_carta[4-items1]
+2 failed, 78 passed in 0.12s
+
+--- borrador de la IA
+1 failed, 17 passed in 0.07s

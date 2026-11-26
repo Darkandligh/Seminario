@@ -1,0 +1,13 @@
+Mutación 5 en afenix/cocina.py: «if ahora < hora_entrada:» -> «if ahora <= hora_entrada:»
+@@ -18 +18 @@ def minutos_espera(hora_entrada: datetime, ahora: datetime) -> float:
+-    if ahora < hora_entrada:
++    if ahora <= hora_entrada:
+
+--- suite
+FAILED tests/test_cocina.py::test_minutos_de_espera[transcurrido0-0.0] - Valu...
+1 failed, 75 passed in 0.12s
+
+--- borrador de la IA
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_minutos_espera[0-0]
+2 failed, 16 passed in 0.06s

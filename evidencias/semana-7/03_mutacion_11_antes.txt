@@ -1,0 +1,7 @@
+Mutación 11 en afenix/comandas.py: una modificación vacía lanza FueraDeCarta en vez de ComandaInvalida
+@@ -82 +82 @@ def _validar_plato(item: object) -> Plato:
+-            raise ComandaInvalida(f"Falta {texto} de «{nombre}»")
++            raise FueraDeCarta(f"Falta {texto} de «{nombre}»")
+
+--- suite
+76 passed in 0.07s

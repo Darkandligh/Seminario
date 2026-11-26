@@ -1,0 +1,12 @@
+Mutación 10 en afenix/estados.py: «comanda.hora_listo = ahora or datetime.now()» -> «comanda.hora_listo = datetime.now()»
+@@ -45 +45 @@ def cambiar_estado(
+-        comanda.hora_listo = ahora or datetime.now()
++        comanda.hora_listo = datetime.now()
+
+--- suite
+FAILED tests/test_estados.py::test_al_quedar_listo_se_guarda_la_hora - assert...
+1 failed, 75 passed in 0.11s
+
+--- borrador de la IA
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+1 failed, 17 passed in 0.06s

@@ -52,6 +52,7 @@ class Comanda:
     platos: list[Plato]
     hora_entrada: datetime
     estado: str = RECIBIDO
+    hora_listo: datetime | None = None
 
 
 def _es_entero_positivo(valor: object) -> TypeGuard[int]:

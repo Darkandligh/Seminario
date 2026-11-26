@@ -1,0 +1,19 @@
+Mutación 1 en afenix/estados.py: «!= ESTADOS.index(actual) + 1» -> «> ESTADOS.index(actual) + 1»
+@@ -40 +40 @@ def cambiar_estado(
+-    if ESTADOS.index(nuevo) != ESTADOS.index(actual) + 1:
++    if ESTADOS.index(nuevo) > ESTADOS.index(actual) + 1:
+
+--- suite
+FAILED tests/test_estados.py::test_cocina_no_puede_saltar_repetir_ni_retroceder[recibido-recibido]
+FAILED tests/test_estados.py::test_cocina_no_puede_saltar_repetir_ni_retroceder[en preparaci\xf3n-en preparaci\xf3n]
+FAILED tests/test_estados.py::test_cocina_no_puede_saltar_repetir_ni_retroceder[listo-listo]
+FAILED tests/test_estados.py::test_cocina_no_puede_saltar_repetir_ni_retroceder[en preparaci\xf3n-recibido]
+FAILED tests/test_estados.py::test_cocina_no_puede_saltar_repetir_ni_retroceder[listo-en preparaci\xf3n]
+FAILED tests/test_estados.py::test_cocina_no_puede_saltar_repetir_ni_retroceder[listo-recibido]
+6 failed, 70 passed in 0.13s
+
+--- borrador de la IA
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_cambio_invalido[recibido]
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_retroceder_de_listo_a_preparacion
+FAILED evidencias/semana-7/borrador_ia/test_borrador_ia.py::test_admin_puede_cambiar_estado
+3 failed, 15 passed in 0.07s

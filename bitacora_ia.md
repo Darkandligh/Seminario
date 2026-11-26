@@ -2,8 +2,8 @@
 
 Proyecto: A-Fénix, plataforma de comandas para el restaurante chino A Fénix de Oro
 Estudiante: Eduardo Ascencio
-Funcionalidad: HU-01 Registrar la comanda y HU-02 Modificaciones de cada plato
-Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code dentro de VS Code en la semana 6
+Funcionalidad: HU-01 y HU-02 (semanas 5 y 6); HU-04 a HU-07 y la suite de pruebas (semana 7)
+Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code dentro de VS Code en las semanas 6 y 7
 
 ## Entradas
 
@@ -153,13 +153,60 @@ Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code den
 - **Verificación:** En el diff no aparece `tests/test_registrar_comanda.py`, así que el agente no tocó las pruebas de la semana 5. Pasan las 39 pruebas.
 - **Commit relacionado:** Todos los de la rama `semana-6`, desde 4bd1861 hasta este.
 
+## Entradas de la semana 7
+
+### Entrada 17
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** «Con las reglas de HU-01, HU-02 y HU-04 a HU-07, propón la tabla de casos de cada función con particiones de equivalencia, valores límite y tabla de decisión para la que combina condiciones.» La IA armó las cuatro tablas y la tabla de decisión de `cambiar_estado`, con 6 reglas.
+- **Decisión:** Aceptada con cambios
+- **Por qué:** Revisé la propuesta con las cinco preguntas. Las particiones y los límites estaban, y cada esperado salía de una historia. Lo que cambié fueron las reglas inventadas: HU-05 habla de comandas atrasadas, pero no hay un número para decir cuándo una comanda va tarde (P-02), así que no se programa la alerta y queda como ambigüedad. También anoté las decisiones que no salen de la regla: que una comanda lista sale de la pantalla, que en un empate de hora va primero la que se registró primero, y que solo el rol «cocina», escrito tal cual, tiene permiso.
+- **Verificación:** Cada fila de `registro_pruebas.md` dice de qué historia sale su esperado. Las decisiones que no salen de una historia quedaron en «Ambigüedades encontradas».
+- **Commit relacionado:** 0003ad0 «Registro de pruebas de la semana 7»
+
+### Entrada 18
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** El prompt de `evidencias/semana-7/borrador_ia/prompt.md`: las reglas, las firmas de las funciones y el pedido de usar parametrize con un comentario por fila, `pytest.approx`, `pytest.raises` con el tipo exacto y esperados fijos, sin tocar mi código. La IA entregó 18 pruebas y 1 falló.
+- **Decisión:** Aceptada con cambios
+- **Por qué:** La que falló esperaba que un «admin» pudiera cambiar el estado. Revisé HU-07 antes de tocar nada: solo la cocina cambia el estado y A-Fénix no tiene administrador, así que el error era de la prueba y la descarté. Con las tres preguntas corregí 9 pruebas, descarté 3 (dos con el rol inventado y una débil que solo miraba el tipo del resultado) y agregué 5 que faltaban. Todo está en la sección 2 de `registro_pruebas.md`.
+- **Verificación:** Corrí el borrador contra los 11 errores a propósito: no habría detectado 7. La suite revisada atrapó 10 a la primera.
+- **Commit relacionado:** 029ce2b «Suite de pruebas de estados y cocina, datos sintéticos y borrador de la IA como evidencia»
+
+### Entrada 19
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** «Genera datos sintéticos para las pruebas: comandas de un turno de almuerzo de A Fénix de Oro, sin personas reales, con casos difíciles como tildes, ñ, apóstrofo, texto vacío y valores en cero. Ponlos en un fixture de pytest.» La IA armó el fixture `turno`, con cinco comandas de un sábado entre las 12:00 y las 12:10, y el fixture `platos_dificiles`.
+- **Decisión:** Aceptada
+- **Por qué:** Las comandas solo llevan mesa, platos y hora, así que no hacen falta nombres ni teléfonos. Me sirvió que en el empate de las 12:04 la mesa 9 se registre antes que la 2: así, si alguien ordena por número de mesa, la prueba lo nota.
+- **Verificación:** Revisé que todos los platos y opciones estén en la carta de ejemplo y que no haya nombres de personas. La mutación 8 (ordenar el empate por mesa) hizo fallar la prueba del empate.
+- **Commit relacionado:** 029ce2b «Suite de pruebas de estados y cocina, datos sintéticos y borrador de la IA como evidencia»
+
+### Entrada 20
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** La IA propuso como mutación 11 que una modificación vacía lanzara `FueraDeCarta` en vez de `ComandaInvalida`, y las 76 pruebas pasaron. Propuso agregar una prueba que revise el tipo exacto del error.
+- **Decisión:** Aceptada
+- **Por qué:** `pytest.raises(ComandaInvalida)` también acepta `FueraDeCarta`, porque hereda de ella. En la API eso sería un 422 donde la tabla del diseño pide un 400. Es justo lo que la tarea pide: si ninguna prueba falla, falta un caso.
+- **Verificación:** Con la prueba nueva volví a meter el error y fallaron 2 filas. Lo deshice con `git restore` y pasaron las 79.
+- **Commit relacionado:** 911442f «Mutaciones 1 a 11 con evidencias; caso agregado tras la mutación 11»
+
+### Entrada 21
+
+- **Fecha:** 2026-11-23
+- **Prompt o sugerencia:** En la suite revisada, la IA escribió `test_cantidad_en_el_tope_se_acepta` en `tests/test_comandas_datos.py`.
+- **Decisión:** Rechazada
+- **Por qué:** Es redundante: prueba lo mismo que la prueba de abuso de la semana 6 con cantidad 20. En la mutación 9 fallaron las dos a la vez, así que la segunda no aporta nada.
+- **Verificación:** La quité y la mutación 9 sigue cubierta por la prueba de la semana 6.
+- **Commit relacionado:** 911442f «Mutaciones 1 a 11 con evidencias; caso agregado tras la mutación 11»
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
-| Aceptadas | 10 |
-| Aceptadas con cambios | 3 |
-| Rechazadas | 3 |
+| Aceptadas | 12 |
+| Aceptadas con cambios | 5 |
+| Rechazadas | 4 |
 
 ## Errores que atraparon las pruebas
 
