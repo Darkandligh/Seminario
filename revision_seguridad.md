@@ -4,6 +4,8 @@ Proyecto: A-Fénix
 Estudiante: Eduardo Ascencio
 Código revisado: `afenix/comandas.py` y `afenix/carta.py` (HU-01 y HU-02, la funcionalidad de la semana 5)
 Rama: `semana-6`
+Fecha: 2026-11-23 (segunda revisión con IA: 2026-11-26)
+Commit revisado: 7f1f11d (la semana 5, antes de las correcciones)
 
 ## 1. Herramientas y criterios
 
@@ -23,7 +25,7 @@ Resultados antes y después:
 | bandit | 0 hallazgos | 0 hallazgos |
 | mypy | 6 errores (funciones sin tipos) | 0 errores |
 | pip-audit | 1 vulnerabilidad (pytest 8.3.4) | 0 vulnerabilidades |
-| pruebas de abuso | 13 de 15 fallan | 15 de 15 pasan |
+| pruebas de abuso | 13 de 15 fallan; en la segunda revisión, 1 de 2 nuevas | 17 de 17 pasan |
 
 Puntos de seguridad revisados:
 
@@ -45,6 +47,8 @@ Puntos de seguridad revisados:
 | H-02 | `afenix/comandas.py:70` y `:110` | Si los platos no venían en lista, si un plato no era diccionario o si el nombre no era texto, la función reventaba con `AttributeError` o `TypeError` en vez de `ComandaInvalida`. Cuando esté la API, eso es un error 500 que muestra detalles internos en lugar de un 400. | A10 Manejo incorrecto de condiciones excepcionales | Media | Reviso el formato antes de validar y lanzo `ComandaInvalida` con «La comanda tiene un formato incorrecto». | d761de7 |
 | H-03 | `afenix/comandas.py:88` y `:112` | No había tope: se aceptaba una cantidad de mil millones y una comanda de 10 000 platos. Con una sola petición se llena la pantalla de la cocina y la memoria del mini PC. | A06 Diseño inseguro | Media | Tope de 50 platos por comanda y 20 por plato. Son provisionales hasta confirmar con el restaurante (P-01). | 06f1eb1 |
 | H-04 | `afenix/comandas.py:75` | El mensaje «El plato «...» no está en la carta» repetía el nombre completo que mandó el cliente, así fueran 5 000 caracteres o un `<script>`. Si la tablet pinta el mensaje sin escapar, es una puerta a XSS. | A05 Inyección | Baja | Recorto el nombre a 40 caracteres en el mensaje. Escapar el HTML le toca a la pantalla cuando exista. | c22890f |
+| H-05 | `afenix/comandas.py:112` | El tope de H-03 contaba filas, no platos: una comanda de 50 filas con cantidad 20 pasaba con 1000 platos, así que el tope no servía. | A06 Diseño inseguro | Media | El tope de 50 ahora suma las cantidades. Prueba de abuso nueva con 3 filas de 20. | 3556eef (prueba en rojo), affc4b8 |
+| H-06 | `README.md`, contrato de la función | La firma del contrato no tenía tipos, aunque el código ya los tiene. | Documentación | Baja | Firma con tipos en el README. | 872e714 (rama semana-5) y 69f0f40 |
 
 Avisos del linter que no corregí:
 
@@ -75,7 +79,22 @@ Lo que encontró la IA:
 | La mesa no tiene tope (se acepta la mesa 10³⁰) | Real, pero no lo corregí | Lo probé y la acepta. No le puse tope porque no sé cuántas mesas hay (P-03). Quedó en pendientes. |
 | pytest 8.3.4 vulnerable | Real (H-01) | Lo dio `pip-audit` y lo confirmé con la descripción de PYSEC-2026-1845. |
 
-Lo que la IA no encontró: la IA no revisó control de acceso, contraseñas ni inyección en base de datos porque nada de eso existe todavía en el código. Eso no quiere decir que esté bien, sino que todavía no hay qué revisar; queda en pendientes.
+Lo que la primera revisión no encontró: puso el tope de 50 platos (H-03), pero contando filas y no unidades. Con 50 filas de cantidad 20 entraban 1000 platos y el tope no protegía nada. Se vio en la segunda revisión, al llamar la función con esa comanda (H-05). Tampoco revisó control de acceso, contraseñas ni inyección en base de datos, porque nada de eso existe todavía en el código; eso queda en pendientes.
+
+### Segunda revisión con IA (prompt de la semana)
+
+Herramienta: Claude (claude.ai), en el chat. Fecha: 2026-11-26.
+
+> «Actúa como revisor de código y de seguridad. Revisa afenix/comandas.py y afenix/carta.py de la rama semana-6 con estos criterios: corrección y pruebas, diseño y legibilidad, y seguridad (inyección, secretos, contraseñas, control de acceso, dependencias y validación de entradas). Entrega una tabla con archivo y línea, problema y severidad (alta, media o baja), y separa los problemas seguros de las sospechas. Comprueba cada problema seguro llamando la función.»
+
+| Hallazgo de la IA | Tipo | ¿Real o falso positivo? | Cómo lo verifiqué |
+|---|---|---|---|
+| `comandas.py:112`: el tope de 50 cuenta filas, no platos | Seguro, media | Real (H-05) | 50 filas de cantidad 20 se aceptaron: 1000 platos en una comanda. |
+| `README.md`: la firma del contrato no tiene tipos | Seguro, baja | Real (H-06) | Comparé el README con la firma de `registrar_comanda` en el código. |
+| `comandas.py:106`: la mesa no tiene tope | Seguro, baja | Real, sin corregir | La mesa 10³⁰ se aceptó. Falta saber cuántas mesas hay (P-03). |
+| `comandas.py:108`: si los platos llegan como `0` o `""`, el mensaje dice «al menos un plato» y no «formato incorrecto» | Sospecha | Falso positivo | Igual lanza `ComandaInvalida` y no revienta. El mensaje no es exacto, pero no es un problema. |
+| `comandas.py:116`: la hora de entrada no tiene zona horaria | Sospecha | Falso positivo | Todo corre en un solo equipo del restaurante (ADR-001), así que todas las horas son de la misma zona. |
+| `comandas.py:57`: `_es_entero_positivo` no tiene docstring | Seguro, baja | Real, sin corregir | Es una función auxiliar privada y tiene un comentario que explica el caso de `True`. Las funciones principales sí tienen docstring. |
 
 ## 4. Pendientes
 

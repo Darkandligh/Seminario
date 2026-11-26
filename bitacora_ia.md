@@ -117,12 +117,39 @@ Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code den
 - **Verificación:** Revisé `_guardado/api.py`: llama `registrar_comanda(datos.get("mesa"), datos.get("platos"))`, sin `ahora`.
 - **Commit relacionado:** Ninguno; quedó como falso positivo en `revision_seguridad.md`.
 
+### Entrada 13
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** Segunda revisión con el prompt de la semana: criterios de corrección, diseño y seguridad, tabla con archivo, línea y severidad, y los problemas seguros separados de las sospechas. Claude encontró 6 cosas.
+- **Decisión:** Aceptada con cambios
+- **Por qué:** De las 6, corregí dos (H-05 y H-06) y dejé una en pendientes (la mesa sin tope). Las dos sospechas eran falsos positivos: el mensaje con `0` o `""` igual lanza `ComandaInvalida`, y la hora sin zona no importa porque todo corre en un solo equipo. Tampoco le puse docstring a `_es_entero_positivo`, porque es auxiliar y ya tiene un comentario.
+- **Verificación:** Llamé la función con cada caso. Quedó la tabla en la sección 3 de `revision_seguridad.md`.
+- **Commit relacionado:** Ninguno; los cambios están en las entradas 14 y 15.
+
+### Entrada 14
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** Para H-05 la IA propuso sumar las cantidades de todos los platos y comparar el total con el tope de 50, con una prueba de abuso de 3 filas de 20.
+- **Decisión:** Aceptada
+- **Por qué:** El tope de H-03 se podía saltar repartiendo los platos en filas. Mantuve el mismo número, 50, para no inventar otro hasta que el restaurante confirme (P-01), y agregué una prueba de 5 filas de 10 para no rechazar comandas buenas.
+- **Verificación:** La prueba nueva falló antes de la corrección y después pasan las 39. Las pruebas de la semana 5 no cambiaron (`git diff 7f1f11d -- tests/test_registrar_comanda.py` sale vacío).
+- **Commit relacionado:** 3556eef «Prueba de abuso: más de 50 platos sumando las cantidades (en rojo)» y affc4b8 «H-05: el tope de 50 platos suma las cantidades de cada plato»
+
+### Entrada 15
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** La IA vio que la firma del contrato en el README no tenía tipos (H-06). Lo corregí en `semana-5` y traje ese cambio a `semana-6` con un merge.
+- **Decisión:** Aceptada
+- **Por qué:** El contrato tiene que coincidir con el código, y el código ya tenía los tipos desde la entrada 11.
+- **Verificación:** El merge no tuvo conflictos y pasan las 39 pruebas.
+- **Commit relacionado:** 872e714 (en `semana-5`) y 69f0f40 «Trae de semana-5 la firma con tipos y la reflexión final»
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
-| Aceptadas | 7 |
-| Aceptadas con cambios | 2 |
+| Aceptadas | 9 |
+| Aceptadas con cambios | 3 |
 | Rechazadas | 3 |
 
 ## Errores que atraparon las pruebas
@@ -141,7 +168,7 @@ Las pruebas detectaron los cinco. Después dejé el código como estaba y volvie
 
 ## Errores que atrapó la revisión de la semana 6
 
-Las 22 pruebas de la semana 5 pasaban, pero solo probaban lo que manda un mesero normal. La revisión encontró cuatro problemas que esas pruebas no veían:
+Las 22 pruebas de la semana 5 pasaban, pero solo probaban lo que manda un mesero normal. La revisión encontró cinco problemas que esas pruebas no veían:
 
 | Id | Qué pasaba | Cómo se vio |
 |---|---|---|
@@ -149,6 +176,7 @@ Las 22 pruebas de la semana 5 pasaban, pero solo probaban lo que manda un mesero
 | H-02 | Platos en texto, un plato `None` o un nombre en lista reventaban con `AttributeError` o `TypeError`, que en la API sería un error 500 | 10 pruebas de abuso en rojo |
 | H-03 | Se aceptaba una comanda de 10 000 platos y una cantidad de mil millones | 2 pruebas de abuso en rojo |
 | H-04 | El mensaje de error devolvía entero un nombre de 5 000 caracteres con `<script>` | 1 prueba de abuso en rojo |
+| H-05 | El tope de 50 platos contaba filas: 50 filas de cantidad 20 eran 1000 platos | 1 prueba de abuso en rojo, en la segunda revisión |
 
 El más serio era H-02: la función prometía lanzar `ComandaInvalida` cuando algo estaba mal, y con datos de otro tipo no lo cumplía. Lo corregí sin tocar las pruebas de la semana 5 y siguen pasando las 22.
 
