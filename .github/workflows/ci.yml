@@ -1,5 +1,5 @@
-# Pipeline de A-Fénix. Parte del borrador de la IA (evidencias/semana-9/ci_borrador_ia.yml)
-# y se corrigió con la lista de revisión de la semana 9: ver docs/revision_configuracion.md.
+# Pipeline de A-Fénix. Parte del borrador de la IA (evidencias/entrega-final/ci_borrador_ia.yml)
+# y se corrigió con la lista de revisión de pipelines del curso: ver docs/revision_configuracion.md.
 name: CI
 
 on:

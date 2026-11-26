@@ -7,12 +7,12 @@ Fecha: 2026-11-26
 ## 1. Cómo se generó
 
 **Herramienta de IA:** Claude (claude.ai), en el chat.
-**Prompt del pipeline:** «Escribe un workflow de GitHub Actions para mi proyecto de Python con pytest». Es el mismo prompt simple de la práctica de la semana 9. El borrador quedó sin cambios en [`evidencias/semana-9/ci_borrador_ia.yml`](../evidencias/semana-9/ci_borrador_ia.yml) y la versión revisada en [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). Entrada 22 de la bitácora.
+**Prompt del pipeline:** «Escribe un workflow de GitHub Actions para mi proyecto de Python con pytest». Es el mismo prompt simple del código de práctica del curso. El borrador quedó sin cambios en [`evidencias/entrega-final/ci_borrador_ia.yml`](../evidencias/entrega-final/ci_borrador_ia.yml) y la versión revisada en [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). Entrada 22 de la bitácora.
 **Prompt del Dockerfile:** no se generó. El diseño (ADR-001) instala A-Fénix directo en un mini PC del restaurante, sin contenedores, y todavía no hay un servidor que empaquetar.
 
 ## 2. Hallazgos
 
-Revisé el borrador línea por línea con la lista de la semana: eventos, permisos, secretos, versiones, dependencias y si un fallo de las pruebas hace fallar el pipeline.
+Revisé el borrador línea por línea con la lista de revisión de pipelines del curso: eventos, permisos, secretos, versiones, dependencias y si un fallo de las pruebas hace fallar el pipeline.
 
 | Archivo y línea | Problema | Riesgo | Corrección |
 |---|---|---|---|

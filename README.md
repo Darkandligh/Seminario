@@ -152,7 +152,7 @@ afenix/cocina.py             tiempo de espera y lista de la pantalla de cocina
 tests/                       pruebas normales, de límite, de error y de abuso
 tests/conftest.py            datos sintéticos de un turno de almuerzo
 evidencias/semana-7/         borrador de pruebas de la IA y salidas de pytest
-evidencias/semana-9/         borrador del pipeline que generó la IA
+evidencias/entrega-final/         borrador del pipeline que generó la IA
 .github/workflows/ci.yml     pipeline de integración continua
 docs/modulos/                propuesta, requisitos y diseño (módulos 1 a 3)
 docs/revision_configuracion.md  revisión del pipeline
