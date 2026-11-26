@@ -1,37 +1,21 @@
 """Carta de ejemplo de A Fénix de Oro.
 
-Son datos de prueba, no la carta real del restaurante. Cada plato dice qué
-opciones acepta en cada modificación: base, proteína, tamaño y picante.
+Sale de la entrevista real (requisitos v3): el cliente pide el plato y el
+color, por ejemplo «dame un chop suey café». Los platos y los colores de cada
+uno son de ejemplo hasta tener la carta completa del restaurante (P-04).
 """
 
-TAMANOS = ["personal", "familiar"]
-PICANTES = ["sin picante", "medio", "picante"]
+COLORES = ["café", "amarillo"]
 
 CARTA = {
-    "Pollo General Tso's": {
-        "base": ["arroz frito", "arroz blanco", "chop suey"],
-        "proteina": ["pollo"],
-        "tamano": TAMANOS,
-        "picante": PICANTES,
-    },
-    "Chop suey": {
-        "base": ["arroz frito", "arroz blanco"],
-        "proteina": ["pollo", "cerdo", "res"],
-        "tamano": TAMANOS,
-        "picante": PICANTES,
-    },
-    "Arroz frito con piña": {
-        "base": ["arroz frito"],
-        "proteina": ["pollo", "cerdo", "camarón"],
-        "tamano": TAMANOS,
-        "picante": PICANTES,
-    },
-    "Cerdo agridulce": {
-        "base": ["arroz frito", "arroz blanco", "chop suey"],
-        "proteina": ["cerdo"],
-        "tamano": TAMANOS,
-        "picante": PICANTES,
-    },
+    "Arroz sencillo": {"color": COLORES},
+    "Arroz con todas las carnes": {"color": COLORES},
+    "Arroz oriental": {"color": COLORES},
+    "Arroz frito con piña": {"color": COLORES},
+    "Pollo General Tso's": {"color": COLORES},
+    "Chop suey": {"color": ["café"]},
+    "Espaguetis": {"color": ["café"]},
+    "Tortilla": {"color": ["amarillo"]},
 }
 
-MODIFICACIONES = ["base", "proteina", "tamano", "picante"]
+MODIFICACIONES = ["color"]

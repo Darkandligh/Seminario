@@ -24,9 +24,8 @@ def hora(h, m):
     return HOY.replace(hour=h, minute=m)
 
 
-def plato(nombre, base="arroz frito", proteina="pollo", tamano="personal", picante="medio"):
-    return {"plato": nombre, "base": base, "proteina": proteina,
-            "tamano": tamano, "picante": picante}
+def plato(nombre, color="café"):
+    return {"plato": nombre, "color": color}
 
 
 def comanda(mesa, h, m, estado=RECIBIDO):
@@ -56,40 +55,20 @@ def test_hu01_e2_comanda_sin_platos():
         registrar_comanda(4, [])
 
 
-# ---------- HU-02. Modificaciones desde la carta ----------
-# Estas dos pruebas son del criterio de la versión 2 (base, proteína, tamaño y
-# picante), que salió de la entrevista simulada. La entrevista real cambió la
-# HU-02 a «plato y color»: ver las pruebas xfail de abajo.
+# ---------- HU-02. Plato y color (versión 3, entrevista real) ----------
 
-def test_hu02_e1_plato_con_modificaciones():
-    # Dado que la carta tiene «Pollo General Tso's» con arroz frito, familiar y picante medio,
-    # cuando los elijo para la mesa 4,
-    c = registrar_comanda(4, [plato("Pollo General Tso's", tamano="familiar", picante="medio")])
-    # entonces el plato queda en la comanda con esas cuatro modificaciones.
-    p = c.platos[0]
-    assert (p.nombre, p.base, p.proteina, p.tamano, p.picante) == (
-        "Pollo General Tso's", "arroz frito", "pollo", "familiar", "medio")
-
-
-def test_hu02_e2_opcion_fuera_de_la_carta():
-    # Dado que la carta no tiene camarón como proteína del chop suey,
-    # cuando intento agregar «Chop suey» de camarón,
-    # entonces no lo agrega y muestra «La proteína no está en la carta».
-    with pytest.raises(FueraDeCarta, match=r"^La proteína no está en la carta$"):
-        registrar_comanda(4, [plato("Chop suey", proteina="camarón")])
-
-
-@pytest.mark.xfail(strict=True, reason="HU-02 versión 3: el cliente pide plato y color; "
-                   "el código todavía pide base, proteína, tamaño y picante")
-def test_hu02_v3_e1_plato_con_color():
-    # Dado que la carta tiene «Chop suey» en color café, cuando lo elijo para la mesa 4,
-    # entonces el plato queda en el pedido con el color café.
+def test_hu02_e1_plato_con_color():
+    # Dado que la carta tiene «Chop suey» en color café,
+    # cuando lo elijo para la mesa 4,
     c = registrar_comanda(4, [{"plato": "Chop suey", "color": "café"}])
-    assert c.platos[0].color == "café"
+    # entonces el plato queda en el pedido con el color café.
+    assert (c.platos[0].nombre, c.platos[0].color) == ("Chop suey", "café")
 
 
-@pytest.mark.xfail(strict=True, reason="HU-02 versión 3: falta validar el color contra la carta")
-def test_hu02_v3_e2_color_que_no_existe():
+def test_hu02_e2_color_que_no_existe():
+    # Dado que el plato no se prepara en un color,
+    # cuando intento pedirlo en ese color,
+    # entonces no lo agrega y muestra «El color no está en la carta».
     with pytest.raises(FueraDeCarta, match=r"^El color no está en la carta$"):
         registrar_comanda(4, [{"plato": "Chop suey", "color": "verde"}])
 

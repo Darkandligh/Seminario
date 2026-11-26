@@ -238,11 +238,20 @@ Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code den
 - **Verificación:** Revisé cada cita del documento de requisitos v3 contra mis respuestas escritas. Con el dato real de 12 mesas puse el tope en el código, primero con la prueba en rojo. Las pruebas de la HU-02 nueva quedaron marcadas como diferencia (`xfail`) porque el código todavía pide las cuatro modificaciones.
 - **Commit relacionado:** d07ecaa y b3395a8 (tope de 12 mesas) y f3e922a «Requisitos v3 con la entrevista real; HU-02 cambia a plato y color (xfail)»
 
+### Entrada 26
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** Le pedí a la IA cambiar la HU-02 a «plato y color» en tres pasos: primero las pruebas de aceptación nuevas en rojo, después las pruebas viejas adaptadas al requisito real, en un commit aparte que explique por qué, y al final el código.
+- **Decisión:** Aceptada
+- **Por qué:** Cambiar pruebas para que el código pase está prohibido, pero aquí cambió el requisito, no el código. Por eso las pruebas viejas se cambiaron en su propio commit, en rojo, antes de tocar el código, y el mensaje dice que el cambio viene de la entrevista real. Las pruebas siguen cubriendo los mismos casos normales, de límite y de error, con plato y color.
+- **Verificación:** Después del commit de las pruebas fallaban 59; con el código nuevo pasan las 93 y la cobertura sigue en 100 %. Quité a propósito la revisión del color contra la carta y fallaron 3 pruebas.
+- **Commit relacionado:** 760f3dd (aceptación en rojo), 18e81e4 (pruebas actualizadas, en rojo) y 131d7be (código)
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
-| Aceptadas | 14 |
+| Aceptadas | 15 |
 | Aceptadas con cambios | 7 |
 | Rechazadas | 4 |
 

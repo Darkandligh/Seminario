@@ -24,10 +24,7 @@ DEMASIADOS_PLATOS = f"Una comanda tiene máximo {MAX_PLATOS} platos"
 CANTIDAD_EXAGERADA = f"La cantidad máxima por plato es {MAX_CANTIDAD}"
 
 NOMBRES_MODIFICACION = {
-    "base": "la base",
-    "proteina": "la proteína",
-    "tamano": "el tamaño",
-    "picante": "el picante",
+    "color": "el color",
 }
 
 
@@ -42,10 +39,7 @@ class FueraDeCarta(ComandaInvalida):
 @dataclass
 class Plato:
     nombre: str
-    base: str
-    proteina: str
-    tamano: str
-    picante: str
+    color: str
     cantidad: int = 1
 
 
@@ -92,14 +86,14 @@ def _validar_plato(item: object) -> Plato:
     if cantidad > MAX_CANTIDAD:
         raise ComandaInvalida(CANTIDAD_EXAGERADA)
 
-    return Plato(nombre, item["base"], item["proteina"], item["tamano"], item["picante"], cantidad)
+    return Plato(nombre, item["color"], cantidad)
 
 
 def registrar_comanda(mesa: Any, items: Any, ahora: datetime | None = None) -> Comanda:
     """Valida la comanda de una mesa y la devuelve en estado recibido.
 
     Recibe el número de la mesa, la lista de platos (diccionarios con plato,
-    base, proteina, tamano, picante y, si se quiere, cantidad) y la hora de
+    color y, si se quiere, cantidad) y la hora de
     entrada; si no llega la hora se usa la del equipo.
     Devuelve la Comanda con sus platos, la hora de entrada y estado recibido.
     Lanza ComandaInvalida si la mesa no es un número de 1 a MAX_MESAS, si los
