@@ -24,9 +24,8 @@ def hora(h, m):
     return HOY.replace(hour=h, minute=m)
 
 
-def plato(nombre, base="arroz frito", proteina="pollo", tamano="personal", picante="medio"):
-    return {"plato": nombre, "base": base, "proteina": proteina,
-            "tamano": tamano, "picante": picante}
+def plato(nombre, color="café"):
+    return {"plato": nombre, "color": color}
 
 
 def comanda(mesa, h, m, estado=RECIBIDO):

@@ -8,8 +8,7 @@ import pytest
 
 from afenix.comandas import ComandaInvalida, FueraDeCarta, registrar_comanda
 
-BIEN = {"plato": "Chop suey", "base": "arroz frito", "proteina": "pollo",
-        "tamano": "personal", "picante": "medio"}
+BIEN = {"plato": "Chop suey", "color": "café"}
 
 
 # H-02: datos con forma equivocada deben dar ComandaInvalida, no un error de Python

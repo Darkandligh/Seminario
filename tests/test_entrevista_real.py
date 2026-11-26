@@ -7,8 +7,7 @@ import pytest
 
 from afenix.comandas import ComandaInvalida, registrar_comanda
 
-PLATO = {"plato": "Chop suey", "base": "arroz frito", "proteina": "pollo",
-         "tamano": "personal", "picante": "medio"}
+PLATO = {"plato": "Chop suey", "color": "café"}
 
 
 def test_la_mesa_12_es_valida():

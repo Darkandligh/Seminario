@@ -1,5 +1,9 @@
 """Pruebas de registrar_comanda (HU-01 y HU-02).
 
+Actualizadas el 2026-11-26: la entrevista real cambió la HU-02. El cliente pide
+el plato y el color, no base, proteína, tamaño y picante. Las pruebas comprueban
+lo mismo que antes (normales, límite y error), con los datos del requisito real.
+
 Están separadas en normales, de límite y de error. Cada una dice de qué
 escenario sale cuando viene directo de una historia.
 """
@@ -13,10 +17,8 @@ from afenix.comandas import RECIBIDO, ComandaInvalida, FueraDeCarta, registrar_c
 HORA = datetime(2026, 11, 23, 12, 5)
 
 
-def plato(nombre="Chop suey", base="arroz frito", proteina="pollo",
-          tamano="personal", picante="sin picante", **extra):
-    return {"plato": nombre, "base": base, "proteina": proteina,
-            "tamano": tamano, "picante": picante, **extra}
+def plato(nombre="Chop suey", color="café", **extra):
+    return {"plato": nombre, "color": color, **extra}
 
 
 # ---------- Normales ----------
@@ -31,12 +33,12 @@ def test_comanda_valida_queda_recibida_con_mesa_platos_y_hora():
     assert comanda.hora_entrada == HORA
 
 
-def test_plato_guarda_sus_cuatro_modificaciones():
+def test_plato_guarda_su_color():
     # HU-02, escenario 1
-    comanda = registrar_comanda(4, [plato("Pollo General Tso's", tamano="familiar", picante="medio")], ahora=HORA)
+    comanda = registrar_comanda(4, [plato("Arroz con todas las carnes", color="café")], ahora=HORA)
     p = comanda.platos[0]
 
-    assert (p.base, p.proteina, p.tamano, p.picante) == ("arroz frito", "pollo", "familiar", "medio")
+    assert (p.nombre, p.color) == ("Arroz con todas las carnes", "café")
 
 
 def test_cantidad_por_defecto_es_uno():
@@ -78,10 +80,10 @@ def test_mesa_que_no_es_entero_positivo_se_rechaza(mesa):
         registrar_comanda(mesa, [plato()], ahora=HORA)
 
 
-def test_proteina_fuera_de_la_carta_se_rechaza():
+def test_color_fuera_de_la_carta_se_rechaza():
     # HU-02, escenario 2
-    with pytest.raises(FueraDeCarta, match="La proteína no está en la carta"):
-        registrar_comanda(4, [plato("Chop suey", proteina="camarón")], ahora=HORA)
+    with pytest.raises(FueraDeCarta, match="El color no está en la carta"):
+        registrar_comanda(4, [plato("Chop suey", color="verde")], ahora=HORA)
 
 
 def test_plato_que_no_esta_en_la_carta_se_rechaza():
@@ -89,15 +91,15 @@ def test_plato_que_no_esta_en_la_carta_se_rechaza():
         registrar_comanda(4, [plato("Pizza hawaiana")], ahora=HORA)
 
 
-@pytest.mark.parametrize("mod", ["base", "proteina", "tamano", "picante"])
-def test_falta_una_modificacion_se_rechaza(mod):
-    with pytest.raises(ComandaInvalida, match="Falta"):
-        registrar_comanda(4, [plato(**{mod: ""})], ahora=HORA)
+@pytest.mark.parametrize("color", ["", None])
+def test_falta_el_color_se_rechaza(color):
+    with pytest.raises(ComandaInvalida, match="Falta el color de «Chop suey»"):
+        registrar_comanda(4, [plato(color=color)], ahora=HORA)
 
 
 def test_un_plato_malo_rechaza_toda_la_comanda():
     with pytest.raises(FueraDeCarta):
-        registrar_comanda(4, [plato(), plato(tamano="gigante")], ahora=HORA)
+        registrar_comanda(4, [plato(), plato(color="verde")], ahora=HORA)
 
 
 @pytest.mark.parametrize("cantidad", [-1, "2"])
