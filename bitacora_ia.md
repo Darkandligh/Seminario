@@ -200,12 +200,32 @@ Asistente usado: Claude (claude.ai), en el chat, en la semana 5; Claude Code den
 - **Verificación:** La quité y la mutación 9 sigue cubierta por la prueba de la semana 6.
 - **Commit relacionado:** 911442f «Mutaciones 1 a 11 con evidencias; caso agregado tras la mutación 11»
 
+## Entradas de la semana 9
+
+### Entrada 22
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** «Escribe un workflow de GitHub Actions para mi proyecto de Python con pytest.» La IA entregó un pipeline que corre `pytest` en cada push y pull request a `main`.
+- **Decisión:** Aceptada con cambios
+- **Por qué:** La base servía y no tenía claves ni `continue-on-error`, pero al revisarlo con la lista de la semana 9 salieron 6 problemas: solo revisaba `main`, no limitaba los permisos, usaba Python «3.x» y paquetes sin versión, solo corría pytest y no tenía tiempo límite. Los corregí todos; el detalle está en `docs/revision_configuracion.md`.
+- **Verificación:** El pipeline revisado salió en verde en GitHub. Cambié el tope de platos a 49 a propósito y salió en rojo en el paso de pruebas; lo revertí y volvió a verde. actionlint no encontró ninguno de los 6 problemas.
+- **Commit relacionado:** 2ddd140 «Borrador del pipeline generado por la IA, sin cambios (evidencia)» y 6daf173 «Pipeline de CI revisado…»
+
+### Entrada 23
+
+- **Fecha:** 2026-11-26
+- **Prompt o sugerencia:** Le pedí a la IA que redactara el reporte de defecto D-01 con la plantilla de la semana 8, a partir de H-05.
+- **Decisión:** Aceptada
+- **Por qué:** El reporte sigue la plantilla y el caso mínimo es una sola llamada. Revisé que los pasos, el commit y el resultado fueran los reales y no inventados.
+- **Verificación:** Seguí los pasos en el commit 69f0f40, antes de la corrección: la comanda de 3 filas de 20 quedó «recibido» con 60 platos, como dice el reporte.
+- **Commit relacionado:** el de `docs/defectos/D-01.md`.
+
 ## Resumen
 
 | Decisión | Cantidad |
 |---|---|
-| Aceptadas | 12 |
-| Aceptadas con cambios | 5 |
+| Aceptadas | 13 |
+| Aceptadas con cambios | 6 |
 | Rechazadas | 4 |
 
 ## Errores que atraparon las pruebas

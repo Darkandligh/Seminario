@@ -129,6 +129,8 @@ python -m pytest --cov=afenix
 
 Salen 81 pruebas con 100 % de cobertura: las 22 de la semana 5 (`tests/test_registrar_comanda.py`), las 17 de abuso de la semana 6 (`tests/test_abuso_comandas.py`) y 42 de la semana 7 (`test_estados.py`, `test_cocina.py` y `test_comandas_datos.py`, con los datos sintéticos de `tests/conftest.py`).
 
+Las mismas pruebas, el linter, mypy, bandit y pip-audit corren solos en GitHub Actions cada vez que se sube un cambio (`.github/workflows/ci.yml`). La revisión de ese pipeline está en [`docs/revision_configuracion.md`](docs/revision_configuracion.md).
+
 Análisis estático y auditoría de dependencias:
 
 ```bash
@@ -150,6 +152,11 @@ afenix/cocina.py             tiempo de espera y lista de la pantalla de cocina
 tests/                       pruebas normales, de límite, de error y de abuso
 tests/conftest.py            datos sintéticos de un turno de almuerzo
 evidencias/semana-7/         borrador de pruebas de la IA y salidas de pytest
+evidencias/semana-9/         borrador del pipeline que generó la IA
+.github/workflows/ci.yml     pipeline de integración continua
+docs/modulos/                propuesta, requisitos y diseño (módulos 1 a 3)
+docs/revision_configuracion.md  revisión del pipeline
+docs/defectos/D-01.md        reporte de defecto
 pyproject.toml               configuración de ruff, bandit y mypy
 requirements.txt             dependencias para las pruebas
 requirements-dev.txt         dependencias del linter y la auditoría
